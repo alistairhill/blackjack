@@ -1,0 +1,42 @@
+* {
+  /*border: 1px red solid;*/
+}
+
+.game-title {
+  color: blue;
+  width: 80%;
+  margin: 0 auto 0 auto;
+  padding: 10px;
+  text-align: center;
+  font-size: 1.75em;
+}
+
+.game-container {
+
+}
+
+.flashes {
+  text-align: center;
+  padding: 8px;
+  color: #f00;
+  /*border: thin solid #8b0000;*/
+  /*background-color: #ffa;*/
+}
+
+.dealer-area {
+  border: thin solid #f9f9f9;
+  margin: 10px;
+  padding: 10px;
+  height: 150px;
+}
+
+.player-area {
+  border: thin solid #f9f9f9;
+  margin: 10px;
+  padding: 10px;
+  height: 150px;
+}
+
+footer {
+  background-color: #f9f9f9;
+}
