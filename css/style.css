@@ -1,5 +1,5 @@
 * {
-  /*border: 1px red solid;*/
+  /*border: 1px green solid;*/
 }
 
 .game-title {
@@ -19,6 +19,7 @@
   text-align: center;
   padding: 8px;
   color: #f00;
+  height: 20px;
   /*border: thin solid #8b0000;*/
   /*background-color: #ffa;*/
 }
@@ -37,6 +38,36 @@
   height: 150px;
 }
 
+.watermark {
+  padding: 20px;
+  text-align: right;
+  position:absolute;
+  width: 80%;
+  opacity:0.2;
+  font-size: 3em;
+  z-index: 1000;
+}
+
+.card {
+  margin: 5px;
+  float: left;
+  font-size: .8em;
+  color: red;
+  padding: 10px 5px 10px 5px;
+  text-align: center;
+  border: thin solid #FDD;
+  width: 80px;
+  height: 120px;
+  border-radius: 4px;
+}
+
 footer {
+  font-size: .8em;
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+  margin: 10px;
+  padding: 10px;
   background-color: #f9f9f9;
+  text-align: center;
 }
