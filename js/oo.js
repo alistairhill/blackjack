@@ -19,3 +19,21 @@ function makeDeck() {
     }
   }
 }
+
+function deal(deck) {
+  if (deck.length != 0) {
+    createCard(deck.pop(), ".dealer-area")
+  } else {
+    console.log("deck is done!")
+  }
+}
+
+var deck1 = new Deck()
+deck1.makeDeck()
+
+function createCard(card, gambler) {
+  var gamblerDiv = document.querySelector(gambler),
+  cardDiv = document.createElement('div')
+  gamblerDiv.appendChild(cardDiv).className = "card"
+  cardDiv.innerHTML = card.rank + "<p>" + card.suit + "<p>" + card.val
+}
