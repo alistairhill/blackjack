@@ -20,6 +20,22 @@ function makeDeck() {
   }
 }
 
+function printDeck(deck) {
+  for (var i = 0, x = deck.length; i < x; i++) {
+    console.log(deck[i])
+  }
+}
+// Fisher–Yates shuffle
+function shuffle(deck) {
+  for (var i = deck.length-1, x = 0, randNum, tempPlace; i >= x; i--) {
+    randNum = Math.floor(Math.random() * i)
+    tempPlace = deck[i]
+    deck[i] = deck[randNum]
+    deck[randNum] = tempPlace
+  }
+  return printDeck(deck)
+}
+
 function deal(deck) {
   if (deck.length != 0) {
     createCard(deck.pop(), ".dealer-area")
@@ -37,3 +53,4 @@ function createCard(card, gambler) {
   gamblerDiv.appendChild(cardDiv).className = "card"
   cardDiv.innerHTML = card.rank + "<p>" + card.suit + "<p>" + card.val
 }
+
