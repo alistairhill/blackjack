@@ -48,9 +48,11 @@ var deck1 = new Deck()
 deck1.makeDeck()
 
 function createCard(card, gambler) {
+  randNum = Math.floor(Math.random() * 7)
   var gamblerDiv = document.querySelector(gambler),
   cardDiv = document.createElement('div')
   gamblerDiv.appendChild(cardDiv).className = "card"
   cardDiv.innerHTML = card.rank + "<p>" + card.suit + "<p>" + card.val
+  cardDiv.style.webkitTransform = "rotate(" + randNum  + "deg)"
 }
 
