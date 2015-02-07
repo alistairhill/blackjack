@@ -85,18 +85,47 @@ function checkHand(whichPlayer) {
 }
 
 function flashMessage(whichPlayer, msg) {
-  var flash = document.querySelector('.flashes')
+  var flash = document.querySelector('.flashes'),
+  fade = 1.0
   setTimeout(function(){
     flash.innerHTML = msg
     flash.style.backgroundColor = "#ffa"
   }, 750)
   setTimeout(function(){
-    flash.innerHTML = ""
-    flash.style.backgroundColor = ""
-  }, 3000)
+    setInterval(function fadeOut(){
+      if (fade >= 0.1) {
+        fade -= 0.1
+        console.log(Math.round(fade * 10) / 10)
+        flash.style.opacity = Math.round(fade * 10) / 10
+      }
+      if (fade == 0.1) {
+        clearInterval(fadeOut)
+      }
+    }, 40)
+  }, 2000)
 }
 
 function endGame() {
   flashMessage(whichPlayer, whichPlayer + " Wins!")
   //reset stuff
 }
+
+
+
+/*
+1. deck is shuffled
+2. player makes bet
+3. player hits deal
+
+3. a) push a card into player array
+3. b) display card
+
+
+4. initial deal; player, dealer, player, dealer
+toggle button options: deal, split, double, surrender, hit, stand, rules/hide rules.
+5. on hit, player gets cards until bust
+6. on stand, dealer goes until he reaches >= 17
+7. game end, flash message for who wins
+
+notes: ace is 11 up until >= 21
+*/
