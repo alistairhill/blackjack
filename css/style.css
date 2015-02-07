@@ -1,5 +1,5 @@
 * {
-  /*border: 1px green solid;*/
+  /*border: thin green solid;*/
 }
 
 body {
@@ -14,13 +14,15 @@ body {
 }
 
 .game-container {
+  height: 100%;
   background-image: url(../imgs/seamless-green-felt.jpg);
 }
 
 .flashes {
   text-align: center;
-  padding: 8px;
+  padding: 6px 6px 0px 6px;
   color: #f00;
+  font-weight: bold;
   height: 20px;
   /*border: thin solid #8b0000;*/
   /*background-color: #ffa;*/
@@ -40,19 +42,31 @@ body {
   height: 150px;
 }
 
+.table-light {
+  background: linear-gradient(#FFF, #111);
+  opacity: 0.2;
+  filter: alpha(opacity=20);
+}
+
 .watermark {
+  color: #FF0;
   padding: 20px;
   text-align: right;
-  position:absolute;
+  position: absolute;
   width: 80%;
-  opacity:0.2;
+  opacity:0.7;
+  filter: alpha(opacity=70);
   font-size: 3em;
-  z-index: 1000;
+  z-index: 1;
 }
 
 .card {
 /*  -ms-transform: rotate(7deg);*/ /* IE 9 */
 /*  -webkit-transform: rotate(7deg); *//* Chrome, Safari, Opera */
+  /*background-image: url(../imgs/back.png);*/
+  /*background-size: contain;*/
+  position: relative;
+  background: #EEE;
   margin: 5px;
   float: left;
   font-size: .8em;
@@ -66,6 +80,7 @@ body {
   -moz-box-shadow:    inset .1em .1em #DDD;
   -webkit-box-shadow: inset .1em .1em #DDD;
   box-shadow:         inset .1em .1em #DDD;
+  z-index: 2;
 }
 
 footer {

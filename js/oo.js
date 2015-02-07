@@ -1,3 +1,8 @@
+var playerCards = {
+  dealer: [],
+  player: []
+}
+
 function Card (rank, suit, value) {
   this.rank = rank
   this.suit = suit
@@ -20,11 +25,6 @@ function makeDeck() {
   }
 }
 
-function printDeck(deck) {
-  for (var i = 0, x = deck.length; i < x; i++) {
-    console.log(deck[i])
-  }
-}
 // Fisher–Yates shuffle
 function shuffle(deck) {
   for (var i = deck.length-1, x = 0, randNum, tempPlace; i >= x; i--) {
@@ -36,23 +36,67 @@ function shuffle(deck) {
   return printDeck(deck)
 }
 
-function deal(deck) {
-  if (deck.length != 0) {
-    createCard(deck.pop(), ".dealer-area")
-  } else {
-    console.log("deck is done!")
+var deal = {
+  bot: function(deck, whichPlayer) {
+    if (deck.length != 0) {
+      playerCards[whichPlayer].push(deck.pop())
+      playerCards[whichPlayer].push(deck.pop())
+      return this.playCard(whichPlayer)
+    } else {
+      console.log("deck is done!")
+    }
+  },
+  playCard: function(whichPlayer) {
+    setTimeout(function(){
+      display.card(playerCards[whichPlayer][playerCards[whichPlayer].length-1], whichPlayer)
+    }, 700)
   }
 }
 
-var deck1 = new Deck()
-deck1.makeDeck()
-
-function createCard(card, gambler) {
-  randNum = Math.floor(Math.random() * 7)
-  var gamblerDiv = document.querySelector(gambler),
-  cardDiv = document.createElement('div')
-  gamblerDiv.appendChild(cardDiv).className = "card"
-  cardDiv.innerHTML = card.rank + "<p>" + card.suit + "<p>" + card.val
-  cardDiv.style.webkitTransform = "rotate(" + randNum  + "deg)"
+var display = {
+  card: function(card, gamblerArray) {
+    randNum = Math.floor(Math.random() * 7)
+    var gamblerDiv = document.querySelector("." + gamblerArray + "-area"),
+    cardDiv = document.createElement('div')
+    gamblerDiv.appendChild(cardDiv).className = "card"
+    cardDiv.innerHTML = card.rank + "<p>" + card.suit + "<p>" + card.val
+    cardDiv.style.webkitTransform = "rotate(" + randNum  + "deg)"
+  }
 }
 
+function startGame() {
+  deck1 = new Deck()
+  deck1.makeDeck()
+  deal.bot(deck1.deckArray, "player")
+}
+
+function checkHand(whichPlayer) {
+  var hand = playerCards[whichPlayer],
+  cardCount = 0
+  for (var i = 0, x = hand.length; i < x; i++) {
+    hand[i] += cardCount
+  }
+  if ((whichPlayer == "dealer") && (cardCount >= 17)) {
+    endGame()
+  } else if (cardCount >=22) {
+    flashMessage(whichPlayer, "Busted")
+  }
+
+}
+
+function flashMessage(whichPlayer, msg) {
+  var flash = document.querySelector('.flashes')
+  setTimeout(function(){
+    flash.innerHTML = msg
+    flash.style.backgroundColor = "#ffa"
+  }, 750)
+  setTimeout(function(){
+    flash.innerHTML = ""
+    flash.style.backgroundColor = ""
+  }, 3000)
+}
+
+function endGame() {
+  flashMessage(whichPlayer, whichPlayer + " Wins!")
+  //reset stuff
+}
