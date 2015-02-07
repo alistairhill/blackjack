@@ -20,12 +20,18 @@ body {
 
 .flashes {
   text-align: center;
-  padding: 6px 6px 0px 6px;
-  color: #f00;
-  font-weight: bold;
-  height: 20px;
-  /*border: thin solid #8b0000;*/
-  /*background-color: #ffa;*/
+  padding: 8px 6px 0px 6px;
+  color: #FFF;
+  height: 22px;
+  border-radius: 3px;
+  width: 97%;
+  margin: 0 auto 0 auto;
+  letter-spacing: 0.1em;
+  text-transform: capitalize;
+  /*blue #20BFDE #009DBD*/
+  /*beige #FDEFBC #EEE092*/
+  /*green #00CD64 #138442*/
+  /*red #FD4547 #D71F20*/
 }
 
 .dealer-area {
