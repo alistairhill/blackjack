@@ -1,12 +1,12 @@
-var playerCards = {
-  dealer: [],
-  player: []
+var dealt = {
+  cards: []
 }
 
 function Card (rank, suit, value) {
   this.rank = rank
   this.suit = suit
   this.val = value
+  this.who = ""
 }
 
 function Deck() {
@@ -37,7 +37,8 @@ function shuffle(deck) {
 }
 
 var deal = {
-  initial: function() {
+  counter: 0,
+  seedHands: function() {
     this.bot(deck1.deckArray, "player")
     this.bot(deck1.deckArray, "dealer")
     this.bot(deck1.deckArray, "player")
@@ -45,26 +46,40 @@ var deal = {
   },
   bot: function(deck, whichPlayer) {
     if (deck.length != 0) {
-      playerCards[whichPlayer].push(deck.pop())
-      return this.playOneCard(whichPlayer)
+      var card = deck.pop()
+      card.who = whichPlayer
+      dealt.cards.push(card)
     } else {
       console.log("deck is done!")
     }
   },
   playOneCard: function(whichPlayer) {
-    setTimeout(function(){
-      display.card(playerCards[whichPlayer][playerCards[whichPlayer].length-1], whichPlayer)
-    }, 500)
+    var that = this
+    if (this.counter < dealt.cards.length) {
+      setTimeout(function(){
+        display.card(dealt.cards[that.counter])
+        that.counter += 1
+      }, 500)
+    }
+    checkHand(whichPlayer)
   },
-  playMultipleCards: function(whichPlayer) {
-    //add multiple cards using setInterval
+  playMultipleCards: function() {
+    var that = this
+    var go = setInterval(function(){
+      display.card(dealt.cards[that.counter])
+      that.counter +=1
+      if (that.counter == dealt.cards.length) {
+        clearInterval(go)
+      }
+    }, 500)
+    // checkHand(whichPlayer)
   }
 }
 
 var display = {
-  card: function(card, whichPlayer) {
+  card: function(card) {
     var randDegree = Math.floor(Math.random() * 7),
-    gamblerDiv = document.querySelector("." + whichPlayer + "-area"),
+    gamblerDiv = document.querySelector("." + card.who + "-area"),
     cardDiv = document.createElement('div')
     gamblerDiv.appendChild(cardDiv).className = "card"
     cardDiv.innerHTML = card.rank + "<p>" + card.suit + "<p>" + card.val
@@ -75,21 +90,27 @@ var display = {
 function startGame() {
   deck1 = new Deck()
   deck1.makeDeck()
-  deal.initial()
+  deal.seedHands()
+  deal.playMultipleCards()
 }
 
 function checkHand(whichPlayer) {
-  var hand = playerCards[whichPlayer],
+  var hand = dealt.cards,
   cardCount = 0
   for (var i = 0, x = hand.length; i < x; i++) {
-    cardCount += hand[i].val
+    if (hand[i].who == whichPlayer) {
+      cardCount += hand[i].val
+    }
   }
   if ((whichPlayer == "dealer") && (cardCount >= 17)) {
     //dealer stops, player's choice
+    console.log("Dealer got " + cardCount)
   } else if (cardCount >=22) {
-    flashMessage("#FD4547", "#D71F20", whichPlayer + " BUSTED!")
-  } else if (playerCards[whichPlayer][0].rank == "Ace" && playerCards[whichPlayer][1].val == 10 || playerCards[whichPlayer][1].rank == "Ace" && playerCards[whichPlayer][0].val == 10) {
+    flashMessage("#FD4547", "#D71F20", whichPlayer + " Busted with " + cardCount + "!")
+  } else if (dealt.cards[0].rank == "Ace" && dealt.cards[1].val == 10 || dealt.cards[1].rank == "Ace" && dealt.cards[0].val == 10) {
     flashMessage("#00CD64", "#138442", whichPlayer + " got a Blackjack!")
+  } else {
+    return console.log("epic fail")
   }
 }
 
@@ -98,7 +119,7 @@ function flashMessage(col1, col2, msg) {
   flash = document.querySelector('.flashes')
   flash.style.opacity = 1.0
   flash.style.backgroundImage = "linear-gradient(" + col1 +" ," + col2 +")"
-  flash.style.border = "thin solid #BBB"
+  flash.style.border = "thin solid #AAA"
   flash.innerHTML = msg
   setTimeout(function(){
     setInterval(function fadeOut(){
@@ -111,8 +132,8 @@ function flashMessage(col1, col2, msg) {
   }, 1700)
 }
 
-function endGame() {
-  flashMessage("#00CD64", "#138442", whichPlayer + " Wins!")
+function endGame(whichPlayer) {
+  flashMessage("#FDEFBC", "#EEE092", whichPlayer + " Wins!")
   //reset stuff
 }
 

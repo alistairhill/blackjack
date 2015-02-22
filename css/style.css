@@ -27,11 +27,13 @@ body {
   width: 97%;
   margin: 0 auto 0 auto;
   letter-spacing: 0.1em;
-  text-transform: capitalize;
   /*blue #20BFDE #009DBD*/
   /*beige #FDEFBC #EEE092*/
   /*green #00CD64 #138442*/
   /*red #FD4547 #D71F20*/
+}
+.flashes:first-letter {
+  text-transform: capitalize;
 }
 
 .dealer-area {
