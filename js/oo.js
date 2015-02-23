@@ -61,56 +61,85 @@ var deal = {
         that.counter += 1
       }, 500)
     }
-    checkHand(whichPlayer)
+    check.hand(whichPlayer)
   },
   playMultipleCards: function() {
-    var that = this
-    var go = setInterval(function(){
+    var that = this,
+    go = setInterval(function(){
       display.card(dealt.cards[that.counter])
       that.counter +=1
       if (that.counter == dealt.cards.length) {
         clearInterval(go)
       }
     }, 500)
-    // checkHand(whichPlayer)
+    // check.hand(whichPlayer)
   }
 }
 
 var display = {
+  rand: function() {
+    return Math.floor(Math.random() * 7)
+  },
   card: function(card) {
-    var randDegree = Math.floor(Math.random() * 7),
-    gamblerDiv = document.querySelector("." + card.who + "-area"),
+    // var randDegree = Math.floor(Math.random() * 7),
+    var gamblerDiv = document.querySelector("." + card.who + "-area"),
     cardDiv = document.createElement('div')
-    gamblerDiv.appendChild(cardDiv).className = "card"
-    cardDiv.innerHTML = card.rank + "<p>" + card.suit + "<p>" + card.val
-    cardDiv.style.webkitTransform = "rotate(" + randDegree  + "deg)"
-  }
-}
-
-function startGame() {
-  deck1 = new Deck()
-  deck1.makeDeck()
-  deal.seedHands()
-  deal.playMultipleCards()
-}
-
-function checkHand(whichPlayer) {
-  var hand = dealt.cards,
-  cardCount = 0
-  for (var i = 0, x = hand.length; i < x; i++) {
-    if (hand[i].who == whichPlayer) {
-      cardCount += hand[i].val
+    if (deal.counter == 1) {
+      gamblerDiv.appendChild(cardDiv).className = "flipped-card"
+    } else {
+      gamblerDiv.appendChild(cardDiv).className = "card"
+      cardDiv.innerHTML = card.rank + "<p>" + card.suit + "<p>" + card.val
+    }
+    cardDiv.style.webkitTransform = "rotate(" + this.rand()  + "deg)"
+  },
+  remove: function() {
+    var cards = document.querySelectorAll(".card")
+    for (var i = 0, x = cards.length; i < x; i++) {
+      cards[i].remove()
+    }
+    if (document.querySelector(".flipped-card") != null) {
+      document.querySelector(".flipped-card").remove()
     }
   }
-  if ((whichPlayer == "dealer") && (cardCount >= 17)) {
-    //dealer stops, player's choice
-    console.log("Dealer got " + cardCount)
-  } else if (cardCount >=22) {
-    flashMessage("#FD4547", "#D71F20", whichPlayer + " Busted with " + cardCount + "!")
-  } else if (dealt.cards[0].rank == "Ace" && dealt.cards[1].val == 10 || dealt.cards[1].rank == "Ace" && dealt.cards[0].val == 10) {
-    flashMessage("#00CD64", "#138442", whichPlayer + " got a Blackjack!")
-  } else {
-    return console.log("epic fail")
+}
+
+game = {
+  start: function() {
+    this.end()
+    deck1 = new Deck()
+    deck1.makeDeck()
+    deal.seedHands()
+    deal.playMultipleCards()
+  },
+  end: function() {
+    deck1 = {}
+    dealt.cards = []
+    deal.counter = 0
+    display.remove()
+  }
+}
+
+check = {
+  hand: function(whichPlayer) {
+    var hand = dealt.cards,
+    cardCount = 0
+    for (var i = 0, x = hand.length; i < x; i++) {
+      if (hand[i].who == whichPlayer) {
+        cardCount += hand[i].val
+      }
+    }
+    if ((whichPlayer == "dealer") && (cardCount >= 17)) {
+      //dealer stops, player's choice
+      console.log("Dealer got " + cardCount)
+    } else if (cardCount >=22) {
+      //busted
+      flashMessage("#FD4547", "#D71F20", whichPlayer + " Busted with " + cardCount + "!")
+    } else if (dealt.cards[0].rank == "Ace" && dealt.cards[1].val == 10 || dealt.cards[1].rank == "Ace" && dealt.cards[0].val == 10) {
+      //blackjack
+      flashMessage("#00CD64", "#138442", whichPlayer + " got a Blackjack!")
+    } else {
+      flashMessage("#FDEFBC", "#EEE092", whichPlayer + " has " + cardCount + ".")
+    }
   }
 }
 
