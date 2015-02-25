@@ -63,16 +63,17 @@ var deal = {
     }
     check.hand(whichPlayer)
   },
-  playMultipleCards: function() {
+  playMultipleCards: function(whichPlayer) {
+    clearInterval(go)
     var that = this,
     go = setInterval(function(){
       display.card(dealt.cards[that.counter])
       that.counter +=1
-      if (that.counter == dealt.cards.length) {
+      if (that.counter >= dealt.cards.length) {
         clearInterval(go)
+        check.hand(whichPlayer)
       }
     }, 500)
-    // check.hand(whichPlayer)
   }
 }
 
@@ -82,6 +83,7 @@ var display = {
   },
   card: function(card) {
     // var randDegree = Math.floor(Math.random() * 7),
+    console.log(card)
     var gamblerDiv = document.querySelector("." + card.who + "-area"),
     cardDiv = document.createElement('div')
     if (deal.counter == 1) {
@@ -109,12 +111,12 @@ game = {
     deck1 = new Deck()
     deck1.makeDeck()
     deal.seedHands()
-    deal.playMultipleCards()
+    deal.playMultipleCards("player")
   },
   end: function() {
+    deal.counter = 0
     deck1 = {}
     dealt.cards = []
-    deal.counter = 0
     display.remove()
   }
 }
@@ -122,23 +124,24 @@ game = {
 check = {
   hand: function(whichPlayer) {
     var hand = dealt.cards,
+    who = hand[dealt.cards.length-1].who,
     cardCount = 0
     for (var i = 0, x = hand.length; i < x; i++) {
-      if (hand[i].who == whichPlayer) {
+      if (hand[i].who == who) {
         cardCount += hand[i].val
       }
     }
-    if ((whichPlayer == "dealer") && (cardCount >= 17)) {
+    if ((who == "dealer") && (cardCount >= 17)) {
       //dealer stops, player's choice
       console.log("Dealer got " + cardCount)
     } else if (cardCount >=22) {
       //busted
-      flashMessage("#FD4547", "#D71F20", whichPlayer + " Busted with " + cardCount + "!")
+      flashMessage("#FD4547", "#D71F20", who + " Busted with " + cardCount + "!")
     } else if (dealt.cards[0].rank == "Ace" && dealt.cards[1].val == 10 || dealt.cards[1].rank == "Ace" && dealt.cards[0].val == 10) {
       //blackjack
-      flashMessage("#00CD64", "#138442", whichPlayer + " got a Blackjack!")
+      flashMessage("#00CD64", "#138442", who + " got a Blackjack!")
     } else {
-      flashMessage("#FDEFBC", "#EEE092", whichPlayer + " has " + cardCount + ".")
+      flashMessage("#FDEFBC", "#EEE092", who + " has " + cardCount + ".")
     }
   }
 }
@@ -148,7 +151,7 @@ function flashMessage(col1, col2, msg) {
   flash = document.querySelector('.flashes')
   flash.style.opacity = 1.0
   flash.style.backgroundImage = "linear-gradient(" + col1 +" ," + col2 +")"
-  flash.style.border = "thin solid #AAA"
+  // flash.style.border = "thin solid #AAA"
   flash.innerHTML = msg
   setTimeout(function(){
     setInterval(function fadeOut(){

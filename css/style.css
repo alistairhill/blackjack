@@ -3,6 +3,8 @@
 }
 
 body {
+  font-size: .8em;
+  background-color: #f9f9f9;
 }
 .game-title {
   color: blue;
@@ -64,7 +66,7 @@ body {
   width: 80%;
   opacity:0.7;
   filter: alpha(opacity=70);
-  font-size: 3em;
+  font-size: 3.5em;
   z-index: 1;
 }
 
@@ -108,13 +110,32 @@ body {
   z-index: 2;
 }
 
+.button-menu {
+  background-color: #11A13F;
+  padding: 15px;
+  margin: 0px;
+  -moz-box-shadow:    inset .1em .1em #DDD;
+  -webkit-box-shadow: inset .1em .1em #DDD;
+  box-shadow:         inset .1em .1em #DDD;
+}
+.deal-but, .hit-but, .stand-but {
+  color: #004132;
+  background-color: #11A13F;
+  border-radius: 7px;
+  margin-right: 10px;
+  padding: 7px;
+  font-size: 1.1em;
+  width: 60px;
+  -moz-box-shadow:    inset .1em .1em #DDD;
+  -webkit-box-shadow: inset .1em .1em #DDD;
+  box-shadow:         inset .1em .1em #DDD;
+}
+
 footer {
-  font-size: .8em;
+  background-color: #11A13F;
   position: fixed;
   width: 100%;
   bottom: 0;
-  margin: 10px;
   padding: 10px;
-  background-color: #f9f9f9;
   text-align: center;
 }
