@@ -1,3 +1,7 @@
+window.onload = function() {
+  game.activate()
+}
+
 var dealt = {
   cards: []
 }
@@ -106,6 +110,9 @@ var display = {
 }
 
 game = {
+  activate: function (){
+    this.deal()
+  },
   start: function() {
     this.end()
     deck1 = new Deck()
@@ -118,13 +125,48 @@ game = {
     deck1 = {}
     dealt.cards = []
     display.remove()
+  },
+  deal: function() {
+    var that = this,
+    deal = document.querySelector(".deal-but")
+    deal.onclick = function() {
+      that.start()
+      this.disabled = true
+      this.classList.add("grayed-out")
+      that.hit()
+      that.stand()
+    }
+  },
+  hit: function() {
+    var hit = document.querySelector(".hit-but")
+    hit.disabled = false
+    hit.classList.remove("grayed-out")
+    hit.onclick = function() {
+      deal.bot(deck1.deckArray, "player")
+      deal.playOneCard("player")
+      this.disabled = true
+      this.classList.add("grayed-out")
+      setTimeout(function(){
+        hit.disabled = false
+        hit.classList.remove("grayed-out")
+      }, 1800)
+    }
+  },
+  stand: function(){
+    var that = this,
+    stand = document.querySelector(".stand-but")
+    stand.disabled = false
+    stand.classList.remove("grayed-out")
+    stand.onclick = function() {
+    }
   }
 }
 
 check = {
   hand: function(whichPlayer) {
     var hand = dealt.cards,
-    who = hand[dealt.cards.length-1].who,
+    who = whichPlayer
+    // who = hand[dealt.cards.length-1].who,
     cardCount = 0
     for (var i = 0, x = hand.length; i < x; i++) {
       if (hand[i].who == who) {
@@ -161,7 +203,7 @@ function flashMessage(col1, col2, msg) {
       }
       if (fade == 0.1) clearInterval(fadeOut)
     }, 40)
-  }, 1700)
+  }, 1400)
 }
 
 function endGame(whichPlayer) {

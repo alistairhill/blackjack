@@ -38,18 +38,36 @@ body {
   text-transform: capitalize;
 }
 
-.dealer-area {
-  border: thin solid #f9f9f9;
+.button-menu {
+  background-image: url(../imgs/seamless-green-felt.jpg);
   margin: 10px;
-  padding: 10px;
-  height: 150px;
+  /*padding: 5px;*/
+  /*border: 3px solid #D1D77A;*/
+  border-radius: 3px;
+}
+.deal-but, .hit-but, .stand-but {
+  background: transparent;
+  color: #D1D77A;
+  letter-spacing: 0.2em;
+  margin-right: 10px;
+  padding: 7px;
+  font-size: 1.1em;
+  width: 70px;
+  border: 3px solid #D1D77A;
+  border-radius: 3px;
+}
+.grayed-out {
+  opacity: 0.4;
+  filter: alpha(opacity=40);
 }
 
-.player-area {
-  border: thin solid #f9f9f9;
+.dealer-area, .player-area {
   margin: 10px;
-  padding: 10px;
-  height: 150px;
+  padding: 5px;
+  min-height: 155px;
+  overflow: auto;
+  border: 3px solid #D1D77A;
+  border-radius: 3px;
 }
 
 .table-light {
@@ -59,13 +77,13 @@ body {
 }
 
 .watermark {
-  color: #FF0;
+  color: #D1D77A;
   padding: 20px;
   text-align: right;
   position: absolute;
   width: 80%;
-  opacity:0.7;
-  filter: alpha(opacity=70);
+  opacity:0.9;
+  filter: alpha(opacity=90);
   font-size: 3.5em;
   z-index: 1;
 }
@@ -84,9 +102,9 @@ body {
   padding: 10px 5px 10px 5px;
   text-align: center;
   border: thin solid #FDD;
-  width: 85px;
-  height: 120px;
-  border-radius: 4px;
+  width: 80px;
+  height: 115px;
+  border-radius: 3px;
   -moz-box-shadow:    inset .1em .1em #DDD;
   -webkit-box-shadow: inset .1em .1em #DDD;
   box-shadow:         inset .1em .1em #DDD;
@@ -103,36 +121,14 @@ body {
   padding: 10px 5px 10px 5px;
   width: 85px;
   height: 120px;
-  border-radius: 4px;
+  border-radius: 3px;
   -moz-box-shadow:    inset .1em .1em #DDD;
   -webkit-box-shadow: inset .1em .1em #DDD;
   box-shadow:         inset .1em .1em #DDD;
   z-index: 2;
 }
 
-.button-menu {
-  background-color: #11A13F;
-  padding: 15px;
-  margin: 0px;
-  -moz-box-shadow:    inset .1em .1em #DDD;
-  -webkit-box-shadow: inset .1em .1em #DDD;
-  box-shadow:         inset .1em .1em #DDD;
-}
-.deal-but, .hit-but, .stand-but {
-  color: #004132;
-  background-color: #11A13F;
-  border-radius: 7px;
-  margin-right: 10px;
-  padding: 7px;
-  font-size: 1.1em;
-  width: 60px;
-  -moz-box-shadow:    inset .1em .1em #DDD;
-  -webkit-box-shadow: inset .1em .1em #DDD;
-  box-shadow:         inset .1em .1em #DDD;
-}
-
 footer {
-  background-color: #11A13F;
   position: fixed;
   width: 100%;
   bottom: 0;
