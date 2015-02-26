@@ -48,6 +48,10 @@ var deal = {
     this.bot(deck1.deckArray, "player")
     this.bot(deck1.deckArray, "dealer")
   },
+  dealer: function() {
+    this.bot(deck1.deckArray, "dealer")
+
+  },
   bot: function(deck, whichPlayer) {
     if (deck.length != 0) {
       var card = deck.pop()
@@ -98,6 +102,11 @@ var display = {
     }
     cardDiv.style.webkitTransform = "rotate(" + this.rand()  + "deg)"
   },
+  flipCard: function(card) {
+    var cardDiv = document.querySelector(".flipped-card")
+    cardDiv.className = "card"
+    cardDiv.innerHTML = card.rank + "<p>" + card.suit + "<p>" + card.val
+  },
   remove: function() {
     var cards = document.querySelectorAll(".card")
     for (var i = 0, x = cards.length; i < x; i++) {
@@ -134,7 +143,9 @@ game = {
       this.disabled = true
       this.classList.add("grayed-out")
       that.hit()
-      that.stand()
+      setTimeout(function() {
+        that.stand()
+      }, 1800)
     }
   },
   hit: function() {
@@ -154,10 +165,16 @@ game = {
   },
   stand: function(){
     var that = this,
+    hit = document.querySelector(".hit-but"),
     stand = document.querySelector(".stand-but")
     stand.disabled = false
     stand.classList.remove("grayed-out")
     stand.onclick = function() {
+      display.flipCard(dealt.cards[1])
+      this.disabled = true
+      this.classList.add("grayed-out")
+      hit.disabled = true
+      hit.classList.add("grayed-out")
     }
   }
 }
