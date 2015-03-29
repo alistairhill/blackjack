@@ -92,6 +92,7 @@ game = {
     this.end()
     deck1 = new Deck()
     deck1.makeDeck()
+    shuffle(deck1.deckArray)
     deal.seedHands()
     deal.playMultipleCards("player")
   },
@@ -216,7 +217,6 @@ var display = {
     return Math.floor(Math.random() * 7)
   },
   card: function(card) {
-    // var randDegree = Math.floor(Math.random() * 7),
     var gamblerDiv = document.querySelector("." + card.who + "-area"),
     cardDiv = document.createElement('div')
     if (deal.counter == 1) {
