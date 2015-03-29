@@ -3,21 +3,27 @@
 }
 
 body {
+  color: #71A696;
   font-size: .8em;
-  background-color: #f9f9f9;
+  background-color: #326054;
 }
 .game-title {
-  color: blue;
-  width: 80%;
+  color: #D1D77A;
+  font-variant: small-caps;
+  letter-spacing: 1em;
+  width: 100%;
   margin: 0 auto 0 auto;
   padding: 10px;
   text-align: center;
   font-size: 1.75em;
+  border-bottom: 1px solid #71A696;
 }
 
 .game-container {
   height: 100%;
-  background-image: url(../imgs/seamless-green-felt.jpg);
+  background: radial-gradient(#3D7667, #24433B);
+  border-bottom: 1px solid #71A696;
+  /*background-image: url(../imgs/seamless-green-felt.jpg);*/
 }
 
 .flashes {
@@ -39,10 +45,7 @@ body {
 }
 
 .button-menu {
-  background-image: url(../imgs/seamless-green-felt.jpg);
   margin: 10px;
-  /*padding: 5px;*/
-  /*border: 3px solid #D1D77A;*/
   border-radius: 3px;
 }
 .deal-but, .hit-but, .stand-but {
@@ -78,13 +81,15 @@ body {
 
 .watermark {
   color: #D1D77A;
+  right: 20px;
   padding: 20px;
+  letter-spacing: .2em;
   text-align: right;
   position: absolute;
   width: 80%;
-  opacity:0.9;
-  filter: alpha(opacity=90);
-  font-size: 3.5em;
+  opacity:0.3;
+  filter: alpha(opacity=30);
+  font-size: 3em;
   z-index: 1;
 }
 

@@ -37,7 +37,6 @@ function shuffle(deck) {
     deck[i] = deck[randNum]
     deck[randNum] = tempPlace
   }
-  return printDeck(deck)
 }
 
 var deal = {
@@ -49,7 +48,9 @@ var deal = {
     this.bot(deck1.deckArray, "dealer")
   },
   dealer: function() {
-    this.bot(deck1.deckArray, "dealer")
+    check.hand("dealer")
+    // this.bot(deck1.deckArray, "dealer")
+    // deal.playOneCard("dealer")
 
   },
   bot: function(deck, whichPlayer) {
@@ -85,13 +86,137 @@ var deal = {
   }
 }
 
+
+game = {
+  start: function() {
+    this.end()
+    deck1 = new Deck()
+    deck1.makeDeck()
+    deal.seedHands()
+    deal.playMultipleCards("player")
+  },
+  end: function() {
+    deal.counter = 0
+    deck1 = {}
+    dealt.cards = []
+    display.remove()
+  },
+  activate: function (){
+    controls.deal()
+  },
+}
+
+controls = {
+  toggleButton: function(button) {
+    var but = button
+    if (but.disabled == true) {
+      but.disabled = false
+      but.classList.remove("grayed-out")
+    } else {
+      but.disabled = true
+      but.classList.add("grayed-out")
+    }
+  },
+  button: {
+    deal: function() {
+      return document.querySelector(".deal-but")
+    },
+    hit: function() {
+      return document.querySelector(".hit-but")
+    },
+    stand: function() {
+      return document.querySelector(".stand-but")
+    }
+  },
+  deal: function() {
+    var that = this,
+    dealButton = this.button.deal()
+    dealButton.onclick = function() {
+      game.start()
+      that.toggleButton(this)
+      setTimeout(function() {
+        that.hit()
+        that.stand()
+        that.toggleButton(dealButton)
+      }, 2000)
+    }
+  },
+  hit: function() {
+    var that = this,
+    hitButton = this.button.hit()
+    that.toggleButton(hitButton)
+    hitButton.onclick = function() {
+      deal.bot(deck1.deckArray, "player")
+      deal.playOneCard("player")
+      that.toggleButton(this)
+      setTimeout(function(){
+        that.toggleButton(hitButton)
+      }, 1800)
+    }
+  },
+  stand: function(){
+    var that = this,
+    dealButton = this.button.deal()
+    hitButton = this.button.hit(),
+    standButton = this.button.stand(),
+    this.toggleButton(standButton)
+    standButton.onclick = function() {
+      display.flipCard(dealt.cards[1])
+      that.toggleButton(this)
+      that.toggleButton(hitButton)
+      deal.dealer()
+    }
+  }
+}
+
+check = {
+  cardCount: function(whichPlayer) {
+    var hand = dealt.cards,
+    who = whichPlayer,
+    score = 0
+    for (var i = 0, x = hand.length; i < x; i++) {
+      if (hand[i].who == who) {
+        score += hand[i].val
+      }
+    }
+    return score
+  },
+  whoWon: function() {
+    var player = this.cardCount("player"),
+    dealer = this.cardCount("dealer")
+    console.log("dealer = " +dealer)
+    console.log("player = " +player)
+    if (player == dealer) {
+      return flashMessage("#00CD64", "#138442", "Push")
+    } else if (player < dealer) {
+      return flashMessage("#00CD64", "#138442", "House Wins!")
+    } else {
+      return flashMessage("#00CD64", "#138442", "Player Wins!")
+    }
+  },
+  hand: function(whichPlayer) {
+    var score = this.cardCount(whichPlayer),
+     who = whichPlayer
+    if ((who == "dealer") && (score >= 17)) {
+      this.whoWon()
+      console.log("Dealer got " + score)
+    } else if (score >=22) {
+      flashMessage("#FD4547", "#D71F20", who + " Busted with " + score + "!")
+    } else if (dealt.cards[0].rank == "Ace" && dealt.cards[1].val == 10 || dealt.cards[1].rank == "Ace" && dealt.cards[0].val == 10) {
+      //blackjack
+      flashMessage("#00CD64", "#138442", who + " got a Blackjack!")
+    } else {
+      flashMessage("#FDEFBC", "#EEE092", who + " has " + score + ".")
+    }
+  }
+}
+
 var display = {
   rand: function() {
     return Math.floor(Math.random() * 7)
   },
   card: function(card) {
     // var randDegree = Math.floor(Math.random() * 7),
-    console.log(card)
     var gamblerDiv = document.querySelector("." + card.who + "-area"),
     cardDiv = document.createElement('div')
     if (deal.counter == 1) {
@@ -118,93 +243,6 @@ var display = {
   }
 }
 
-game = {
-  activate: function (){
-    this.deal()
-  },
-  start: function() {
-    this.end()
-    deck1 = new Deck()
-    deck1.makeDeck()
-    deal.seedHands()
-    deal.playMultipleCards("player")
-  },
-  end: function() {
-    deal.counter = 0
-    deck1 = {}
-    dealt.cards = []
-    display.remove()
-  },
-  deal: function() {
-    var that = this,
-    deal = document.querySelector(".deal-but")
-    deal.onclick = function() {
-      that.start()
-      this.disabled = true
-      this.classList.add("grayed-out")
-      that.hit()
-      setTimeout(function() {
-        that.stand()
-      }, 1800)
-    }
-  },
-  hit: function() {
-    var hit = document.querySelector(".hit-but")
-    hit.disabled = false
-    hit.classList.remove("grayed-out")
-    hit.onclick = function() {
-      deal.bot(deck1.deckArray, "player")
-      deal.playOneCard("player")
-      this.disabled = true
-      this.classList.add("grayed-out")
-      setTimeout(function(){
-        hit.disabled = false
-        hit.classList.remove("grayed-out")
-      }, 1800)
-    }
-  },
-  stand: function(){
-    var that = this,
-    hit = document.querySelector(".hit-but"),
-    stand = document.querySelector(".stand-but")
-    stand.disabled = false
-    stand.classList.remove("grayed-out")
-    stand.onclick = function() {
-      display.flipCard(dealt.cards[1])
-      this.disabled = true
-      this.classList.add("grayed-out")
-      hit.disabled = true
-      hit.classList.add("grayed-out")
-    }
-  }
-}
-
-check = {
-  hand: function(whichPlayer) {
-    var hand = dealt.cards,
-    who = whichPlayer
-    // who = hand[dealt.cards.length-1].who,
-    cardCount = 0
-    for (var i = 0, x = hand.length; i < x; i++) {
-      if (hand[i].who == who) {
-        cardCount += hand[i].val
-      }
-    }
-    if ((who == "dealer") && (cardCount >= 17)) {
-      //dealer stops, player's choice
-      console.log("Dealer got " + cardCount)
-    } else if (cardCount >=22) {
-      //busted
-      flashMessage("#FD4547", "#D71F20", who + " Busted with " + cardCount + "!")
-    } else if (dealt.cards[0].rank == "Ace" && dealt.cards[1].val == 10 || dealt.cards[1].rank == "Ace" && dealt.cards[0].val == 10) {
-      //blackjack
-      flashMessage("#00CD64", "#138442", who + " got a Blackjack!")
-    } else {
-      flashMessage("#FDEFBC", "#EEE092", who + " has " + cardCount + ".")
-    }
-  }
-}
-
 function flashMessage(col1, col2, msg) {
   var fade = 1.0,
   flash = document.querySelector('.flashes')
@@ -213,21 +251,15 @@ function flashMessage(col1, col2, msg) {
   // flash.style.border = "thin solid #AAA"
   flash.innerHTML = msg
   setTimeout(function(){
-    setInterval(function fadeOut(){
+    var fadeOut = setInterval(function(){
       if (fade >= 0.1) {
         fade -= 0.1
         flash.style.opacity = Math.round(fade * 10) / 10
       }
       if (fade == 0.1) clearInterval(fadeOut)
     }, 40)
-  }, 1400)
+  }, 1800)
 }
-
-function endGame(whichPlayer) {
-  flashMessage("#FDEFBC", "#EEE092", whichPlayer + " Wins!")
-  //reset stuff
-}
-
 
 /*
 1. deck is shuffled
