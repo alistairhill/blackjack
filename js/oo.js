@@ -144,15 +144,20 @@ controls = {
   },
   hit: function() {
     var that = this,
-    hitButton = this.button.hit()
+    hitButton = this.button.hit(),
+    standButton = this.button.stand()
     that.toggleButton(hitButton)
     hitButton.onclick = function() {
       deal.bot(deck1.deckArray, "player")
       deal.playOneCard("player")
       that.toggleButton(this)
-      setTimeout(function(){
-        that.toggleButton(hitButton)
-      }, 1800)
+      if (check.cardCount("player") > 21){
+        that.toggleButton(standButton)
+      } else {
+        setTimeout(function(){
+          that.toggleButton(hitButton)
+        }, 1800)
+      }
     }
   },
   stand: function(){
@@ -189,7 +194,7 @@ check = {
     console.log("player = " +player)
     if (player == dealer) {
       return flashMessage("#00CD64", "#138442", "Push")
-    } else if (player < dealer) {
+    } else if (player < dealer && this.cardCount("player") > 21) {
       return flashMessage("#00CD64", "#138442", "House Wins!")
     } else {
       return flashMessage("#00CD64", "#138442", "Player Wins!")
@@ -204,7 +209,6 @@ check = {
     } else if (score >=22) {
       flashMessage("#FD4547", "#D71F20", who + " Busted with " + score + "!")
     } else if (dealt.cards[0].rank == "Ace" && dealt.cards[1].val == 10 || dealt.cards[1].rank == "Ace" && dealt.cards[0].val == 10) {
-      //blackjack
       flashMessage("#00CD64", "#138442", who + " got a Blackjack!")
     } else {
       flashMessage("#FDEFBC", "#EEE092", who + " has " + score + ".")
