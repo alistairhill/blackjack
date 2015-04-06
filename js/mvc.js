@@ -33,6 +33,15 @@ View.prototype = {
     cardDiv = document.createElement('div')
     userDiv.appendChild(cardDiv).className = "card"
     cardDiv.innerHTML = card.rank + "<p>" + card.suit + "<p>" + card.val
+  },
+  removeCards: function() {
+    var cards = document.querySelectorAll(".card")
+    for (var i = 0, x = cards.length; i < x; i++) {
+      cards[i].remove()
+    }
+    if (document.querySelector(".flipped-card") != null) {
+      document.querySelector(".flipped-card").remove()
+    }
   }
 }
 
@@ -44,10 +53,7 @@ function Controller(view, shoe, player, dealer) {
 }
 Controller.prototype = {
   intializeStart: function() {
-    console.log("starting")
-    this.shoe.makeDeck()
     this.bindListeners()
-    this.seedHands()
   },
   bindListeners: function() {
     var dealBut = this.view.getDealButton(),
@@ -58,21 +64,26 @@ Controller.prototype = {
     standBut.addEventListener('click', this.standButton.bind(this))
   },
   startRound: function() {
-    this.playMultipleCards("player")
-    this.playMultipleCards("dealer")
-  },
-  dealButton: function(button) {
-    this.startRound()
+    this.shoe.makeDeck()
+    this.seedHands()
+    this.playCards("player")
+    this.playCards("dealer")
     this.toggleButton(this.view.getHitButton())
     this.toggleButton(this.view.getStandButton())
   },
+  dealButton: function(button) {
+    this.gameOver()
+    this.startRound()
+  },
   standButton: function(button) {
+    this.toggleButton(this.view.getHitButton())
+    this.toggleButton(this.view.getStandButton())
     // this.deal("dealer")
-    // this.playMultipleCards("dealer")
+    // this.playCards("dealer")
   },
   hitButton: function() {
     this.deal("player")
-    this.playMultipleCards("player")
+    this.playCards("player")
   },
   toggleButton: function(button) {
     var but = button
@@ -96,7 +107,7 @@ Controller.prototype = {
       console.log("deck is done!")
     }
   },
-  playMultipleCards: function(user) {
+  playCards: function(user) {
     var that = this,
     go = setInterval(function(){
       that.view.addCard(user, that[user].hand[that[user].counter])
@@ -106,6 +117,12 @@ Controller.prototype = {
       }
     }, 500)
     console.log(that[user].counter)
+  },
+  gameOver: function() {
+    this.shoe.cards = []
+    this["player"].reset()
+    this["dealer"].reset()
+    this.view.removeCards()
   }
 }
 
@@ -142,6 +159,12 @@ Shoe.prototype = {
 
 function User(name) {
   this.name = name
+  this.hand = []
+  this.roundCardCount = 0
+  this.counter = 0
+  this.money = 0
+}
+User.prototype.reset = function() {
   this.hand = []
   this.roundCardCount = 0
   this.counter = 0
