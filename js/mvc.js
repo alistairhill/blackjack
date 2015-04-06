@@ -27,6 +27,12 @@ View.prototype = {
   },
   getUserDiv: function(user) {
     return document.querySelector("." + user + "-area")
+  },
+  addCard: function(user, card) {
+    var userDiv = document.querySelector("." + user + "-area"),
+    cardDiv = document.createElement('div')
+    userDiv.appendChild(cardDiv).className = "card"
+    cardDiv.innerHTML = card.rank + "<p>" + card.suit + "<p>" + card.val
   }
 }
 
@@ -41,6 +47,7 @@ Controller.prototype = {
     console.log("starting")
     this.shoe.makeDeck()
     this.bindListeners()
+    this.seedHands()
   },
   bindListeners: function() {
     var dealBut = this.view.getDealButton(),
@@ -50,15 +57,22 @@ Controller.prototype = {
     hitBut.addEventListener('click', this.hitButton.bind(this))
     standBut.addEventListener('click', this.standButton.bind(this))
   },
+  startRound: function() {
+    this.playMultipleCards("player")
+    this.playMultipleCards("dealer")
+  },
   dealButton: function(button) {
-
+    this.startRound()
     this.toggleButton(this.view.getHitButton())
     this.toggleButton(this.view.getStandButton())
   },
   standButton: function(button) {
-
+    // this.deal("dealer")
+    // this.playMultipleCards("dealer")
   },
   hitButton: function() {
+    this.deal("player")
+    this.playMultipleCards("player")
   },
   toggleButton: function(button) {
     var but = button
@@ -69,6 +83,29 @@ Controller.prototype = {
       but.disabled = true
       but.classList.add("grayed-out")
     }
+  },
+  seedHands: function() {
+    this.deal("player"); this.deal("dealer"); this.deal("player"); this.deal("dealer")
+  },
+  deal: function(user) {
+    var deck = this.shoe.cards
+    if (deck.length != 0) {
+      var card = deck.pop()
+      this[user].hand.push(card)
+    } else {
+      console.log("deck is done!")
+    }
+  },
+  playMultipleCards: function(user) {
+    var that = this,
+    go = setInterval(function(){
+      that.view.addCard(user, that[user].hand[that[user].counter])
+      that[user].counter +=1
+      if (that[user].counter >= that[user].hand.length) {
+        clearInterval(go)
+      }
+    }, 500)
+    console.log(that[user].counter)
   }
 }
 
@@ -106,6 +143,7 @@ Shoe.prototype = {
 function User(name) {
   this.name = name
   this.hand = []
-  this.cardCount = 0
+  this.roundCardCount = 0
+  this.counter = 0
   this.money = 0
 }
