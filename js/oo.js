@@ -10,7 +10,7 @@ function Card (rank, suit, value) {
   this.rank = rank
   this.suit = suit
   this.val = value
-  this.who = ""
+  this.owner = ""
 }
 
 function Deck() {
@@ -48,15 +48,15 @@ var deal = {
     this.bot(deck1.deckArray, "dealer")
   },
   dealer: function() {
-    check.hand("dealer")
-    // this.bot(deck1.deckArray, "dealer")
-    // deal.playOneCard("dealer")
-
+    // while (check.cardCount("dealer") <17) {
+    //   this.bot(deck1.deckArray, "dealer")
+    //   this.playOneCard("dealer")
+    // }
   },
   bot: function(deck, whichPlayer) {
     if (deck.length != 0) {
       var card = deck.pop()
-      card.who = whichPlayer
+      card.owner = whichPlayer
       dealt.cards.push(card)
     } else {
       console.log("deck is done!")
@@ -83,6 +83,11 @@ var deal = {
         check.hand(whichPlayer)
       }
     }, 500)
+  },
+  softSeventeenCheck: function(whichPlayer) {
+    if (forAce(whichPlayer) == true) {
+      //update player score
+    }
   }
 }
 
@@ -188,13 +193,13 @@ check = {
     return score
   },
   whoWon: function() {
-    var player = this.cardCount("player"),
-    dealer = this.cardCount("dealer")
-    console.log("dealer = " +dealer)
-    console.log("player = " +player)
-    if (player == dealer) {
+    var playerCount = this.cardCount("player"),
+    dealerCount = this.cardCount("dealer")
+    console.log("dealer = " +dealerCount)
+    console.log("player = " +playerCount)
+    if (playerCount == dealerCount) {
       return flashMessage("#00CD64", "#138442", "Push")
-    } else if (player < dealer && this.cardCount("player") > 21) {
+    } else if (playerCount < dealerCount || playerCount > 21) {
       return flashMessage("#00CD64", "#138442", "House Wins!")
     } else {
       return flashMessage("#00CD64", "#138442", "Player Wins!")
@@ -202,16 +207,27 @@ check = {
   },
   hand: function(whichPlayer) {
     var score = this.cardCount(whichPlayer),
-     who = whichPlayer
-    if ((who == "dealer") && (score >= 17)) {
-      this.whoWon()
-      console.log("Dealer got " + score)
-    } else if (score >=22) {
+    who = whichPlayer
+    if (score >=22) {
       flashMessage("#FD4547", "#D71F20", who + " Busted with " + score + "!")
+    //play dealer cards if player busts
+    } else if ((who == "dealer") && (score >= 17)) {
+      this.whoWon()
     } else if (dealt.cards[0].rank == "Ace" && dealt.cards[1].val == 10 || dealt.cards[1].rank == "Ace" && dealt.cards[0].val == 10) {
       flashMessage("#00CD64", "#138442", who + " got a Blackjack!")
+
     } else {
-      flashMessage("#FDEFBC", "#EEE092", who + " has " + score + ".")
+      // flashMessage("#FDEFBC", "#EEE092", who + " has " + score + ".")
+    }
+  },
+  forAce: function(whichPlayer) {
+    var hand = dealt.cards,
+    who = whichPlayer
+    if (this.cardCount(whichPlayer) <22)
+    for (var i = 0, x = hand.length; i < x; i++) {
+      if (hand[i].who == who && hand[i].rank == "Ace") {
+
+      }
     }
   }
 }
@@ -221,7 +237,7 @@ var display = {
     return Math.floor(Math.random() * 7)
   },
   card: function(card) {
-    var gamblerDiv = document.querySelector("." + card.who + "-area"),
+    var gamblerDiv = document.querySelector("." + card.owner + "-area"),
     cardDiv = document.createElement('div')
     if (deal.counter == 1) {
       gamblerDiv.appendChild(cardDiv).className = "flipped-card"

@@ -7,13 +7,12 @@ window.onload = function() {
   controller.intializeStart()
 }
 
-function View(user) {
+function View() {
   this.deal = ".deal-but"
   this.hit = ".hit-but"
   this.stand = ".stand-but"
-  this.div = "div"
-  this.flipped = "flipped-card"
-  this.card = "card"
+  this.flipped = ".flipped-card"
+  this.card = ".card"
 }
 
 View.prototype = {
@@ -26,7 +25,7 @@ View.prototype = {
   getStandButton: function() {
     return document.querySelector(this.stand)
   },
-  getGamblerDiv: function(user) {
+  getUserDiv: function(user) {
     return document.querySelector("." + user + "-area")
   }
 }
@@ -40,6 +39,36 @@ function Controller(view, shoe, player, dealer) {
 Controller.prototype = {
   intializeStart: function() {
     console.log("starting")
+    this.shoe.makeDeck()
+    this.bindListeners()
+  },
+  bindListeners: function() {
+    var dealBut = this.view.getDealButton(),
+    hitBut = this.view.getHitButton(),
+    standBut = this.view.getStandButton()
+    dealBut.addEventListener('click', this.dealButton.bind(this))
+    hitBut.addEventListener('click', this.hitButton.bind(this))
+    standBut.addEventListener('click', this.standButton.bind(this))
+  },
+  dealButton: function(button) {
+
+    this.toggleButton(this.view.getHitButton())
+    this.toggleButton(this.view.getStandButton())
+  },
+  standButton: function(button) {
+
+  },
+  hitButton: function() {
+  },
+  toggleButton: function(button) {
+    var but = button
+    if (but.disabled == true) {
+      but.disabled = false
+      but.classList.remove("grayed-out")
+    } else {
+      but.disabled = true
+      but.classList.add("grayed-out")
+    }
   }
 }
 
@@ -61,6 +90,15 @@ Shoe.prototype = {
       for (var y = 0, z = rank.length; y < z; y++) {
         this.cards.push(new Card(rank[y], suit[i], value[y]))
       }
+    }
+  },
+  shuffle: function() {
+    var deck = this.cards
+    for (var i = deck.length-1, x = 0, randNum, tempPlace; i >= x; i--) {
+      randNum = Math.floor(Math.random() * i)
+      tempPlace = deck[i]
+      deck[i] = deck[randNum]
+      deck[randNum] = tempPlace
     }
   }
 }
