@@ -13,6 +13,7 @@ function View() {
   this.stand = ".stand-but"
   this.flipped = ".flipped-card"
   this.card = ".card"
+  this.flashes = '.flashes'
 }
 
 View.prototype = {
@@ -28,6 +29,9 @@ View.prototype = {
   getUserDiv: function(user) {
     return document.querySelector("." + user + "-area")
   },
+  getFlashes: function() {
+    return document.querySelector(this.flashes)
+  },
   addCard: function(user, card) {
     var userDiv = document.querySelector("." + user + "-area"),
     cardDiv = document.createElement('div')
@@ -42,6 +46,22 @@ View.prototype = {
     if (document.querySelector(".flipped-card") != null) {
       document.querySelector(".flipped-card").remove()
     }
+  },
+  flashMessage: function(col1, col2, msg) {
+    var fade = 1.0,
+    flash = this.getFlashes()
+    flash.style.opacity = 1.0
+    flash.style.backgroundImage = "linear-gradient(" + col1 +" ," + col2 +")"
+    flash.innerHTML = msg
+    setTimeout(function(){
+      var fadeOut = setInterval(function(){
+        if (fade >= 0.1) {
+          fade -= 0.1
+          flash.style.opacity = Math.round(fade * 10) / 10
+        }
+        if (fade == 0.1) clearInterval(fadeOut)
+      }, 40)
+    }, 1800)
   }
 }
 
@@ -68,18 +88,17 @@ Controller.prototype = {
     this.seedHands()
     this.playCards("player")
     this.playCards("dealer")
-    this.toggleButton(this.view.getHitButton())
-    this.toggleButton(this.view.getStandButton())
+    this.toggleBut(this.view.getHitButton(), "on")
+    this.toggleBut(this.view.getStandButton(), "on")
   },
   dealButton: function(button) {
     this.gameOver()
     this.startRound()
   },
   standButton: function(button) {
-    this.toggleButton(this.view.getHitButton())
-    this.toggleButton(this.view.getStandButton())
-    // this.deal("dealer")
-    // this.playCards("dealer")
+    this.toggleBut(this.view.getHitButton(), "off")
+    this.toggleBut(this.view.getStandButton(), "off")
+    this.dealerHand()
   },
   hitButton: function() {
     this.deal("player")
@@ -95,14 +114,36 @@ Controller.prototype = {
       but.classList.add("grayed-out")
     }
   },
+  toggleBut: function(button, status) {
+    var but = button
+    if (status === "on") {
+      but.disabled = false
+      but.classList.remove("grayed-out")
+    } else if (status === "off") {
+      but.disabled = true
+      but.classList.add("grayed-out")
+    }
+  },
   seedHands: function() {
     this.deal("player"); this.deal("dealer"); this.deal("player"); this.deal("dealer")
+  },
+  dealerHand: function() {
+    while (this["dealer"].roundCardCount < 17) {
+      this.deal("dealer")
+    }
+    console.log(this["dealer"].counter)
+    console.log(this["dealer"].hand.length)
+    if (this["dealer"].hand.length > 2) {
+      console.log(this["dealer"].roundCardCount)
+      this.playCards("dealer")
+    }
   },
   deal: function(user) {
     var deck = this.shoe.cards
     if (deck.length != 0) {
       var card = deck.pop()
       this[user].hand.push(card)
+      this[user].roundCardCount += card.val
     } else {
       console.log("deck is done!")
     }
@@ -116,13 +157,41 @@ Controller.prototype = {
         clearInterval(go)
       }
     }, 500)
-    console.log(that[user].counter)
+    //check if busted
+    if (this[user].roundCardCount > 21) {
+      if (this.checkForAce(user) == true) {
+        this[user].roundCardCount -= 10
+      } else {
+        this.userBusted(user)
+      }
+    } else {
+      // console.log(user + " did not bust")
+    }
+    // console.log(user + " " + this[user].roundCardCount)
+  },
+  checkForAce: function(user) {
+    var hand = this[user].hand
+    for (var i = 0, x = hand.length; i < x; i++) {
+      if (hand[i].rank == "Ace" && hand[i].val === 11) {
+        hand[i].val = 1
+        return true
+      }
+    }
+  },
+  userBusted: function(user) {
+    var that = this
+    this.view.flashMessage("#FD4547", "#D71F20", user + " Busted with " + this[user].roundCardCount + "!")
+    this.toggleBut(this.view.getHitButton(), "off")
+    this.toggleBut(this.view.getStandButton(), "off")
+    // setTimeout(function() {that.gameOver()}, 1000)
   },
   gameOver: function() {
     this.shoe.cards = []
-    this["player"].reset()
-    this["dealer"].reset()
+    this["player"].resetHand()
+    this["dealer"].resetHand()
     this.view.removeCards()
+    this.toggleBut(this.view.getHitButton(), "off")
+    this.toggleBut(this.view.getStandButton(), "off")
   }
 }
 
@@ -164,9 +233,8 @@ function User(name) {
   this.counter = 0
   this.money = 0
 }
-User.prototype.reset = function() {
+User.prototype.resetHand = function() {
   this.hand = []
   this.roundCardCount = 0
   this.counter = 0
-  this.money = 0
 }
