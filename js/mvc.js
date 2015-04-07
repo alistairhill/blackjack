@@ -8,6 +8,8 @@ window.onload = function() {
 }
 
 function View() {
+  this.pscore = ".player-score"
+  this.dscore = ".dealer-score"
   this.deal = ".deal-but"
   this.hit = ".hit-but"
   this.stand = ".stand-but"
@@ -17,6 +19,12 @@ function View() {
 }
 
 View.prototype = {
+  playerScore: function() {
+    return document.querySelector(this.pscore)
+  },
+  dealerScore: function() {
+    return document.querySelector(this.dscore)
+  },
   getDealButton: function() {
     return document.querySelector(this.deal)
   },
@@ -64,8 +72,11 @@ View.prototype = {
         if (fade == 0.1) clearInterval(fadeOut)
       }, 40)
     }, 1800)
+  },
+  updateScore: function(user) {
+
   }
-}
+ }
 
 function Controller(view, shoe, player, dealer) {
   this.view = view
@@ -92,6 +103,9 @@ Controller.prototype = {
     hitBut.addEventListener('click', this.hitButton.bind(this))
     standBut.addEventListener('click', this.standButton.bind(this))
   },
+  makeMultipleDecks(){
+
+  },
   startRound: function() {
     this.seedHands()
     this.playCards("player")
@@ -100,12 +114,11 @@ Controller.prototype = {
     this.toggleBut(this.view.getStandButton(), "on")
   },
   dealButton: function(button) {
-    this.gameOver()
+    this.endRound()
     this.startRound()
   },
   standButton: function(button) {
-    this.toggleBut(this.view.getHitButton(), "off")
-    this.toggleBut(this.view.getStandButton(), "off")
+    this.buttonsOff()
     this.dealerHand()
   },
   hitButton: function() {
@@ -146,13 +159,14 @@ Controller.prototype = {
   },
   deal: function(user) {
     var deck = this.shoe.cards
-    if (deck.length != 0) {
+    //12 cards or less will be where the wedge is placed
+    if (deck.length < 12) {
       var card = deck.pop()
       this[user].hand.push(card)
       this[user].roundCardCount += card.val
     } else {
-      //need to make deck wedge
-      console.log("deck is done!")
+      console.log("got to shoe wedge, no more cards")
+      //run make multiple decks function
     }
   },
   playCards: function(user) {
@@ -169,24 +183,22 @@ Controller.prototype = {
       if (this[user].roundCardCount > 21) {
         if (this.checkForAce(user) == true) {
           this[user].roundCardCount -= 10
-          //trigger more cards if dealer is auto playing
-          if (user == "dealer") {
-            this.dealerHand()
-          }
+          //trigger more cards for auto dealer
+          if (user == "dealer") this.dealerHand()
         } else {
-          console.log(user)
-          this.userBusted(user)
+          this.buttonsOff()
+          setTimeout(function(){that.userBusted(user)},1400)
         }
       } else {
         // console.log(user + " did not bust")
       }
     }
+    this.view[user + "Score"]().innerHTML = this[user].roundCardCount
   },
   checkForAce: function(user) {
     var hand = this[user].hand
     for (var i = 0, x = hand.length; i < x; i++) {
       if (hand[i].rank == "Ace" && hand[i].val === 11) {
-        console.log(user + " got in here!")
         hand[i].val = 1
         return true
       }
@@ -198,19 +210,20 @@ Controller.prototype = {
     this.toggleBut(this.view.getHitButton(), "off")
     this.toggleBut(this.view.getStandButton(), "off")
     if (user === "player") {
-      console.log("got in here")
       setTimeout(function(){that.dealerHand()}, 1300)
     } else {
-      setTimeout(function() {that.gameOver()}, 1300)
+      setTimeout(function() {that.endRound()}, 1300)
     }
   },
-  gameOver: function() {
-    // this.shoe.cards = []
+  buttonsOff: function(){
+    this.toggleBut(this.view.getHitButton(), "off")
+    this.toggleBut(this.view.getStandButton(), "off")
+  },
+  endRound: function() {
     this["player"].resetHand()
     this["dealer"].resetHand()
     this.view.removeCards()
-    this.toggleBut(this.view.getHitButton(), "off")
-    this.toggleBut(this.view.getStandButton(), "off")
+    this.buttonsOff()
   }
 }
 

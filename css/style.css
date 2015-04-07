@@ -79,10 +79,9 @@ body {
   filter: alpha(opacity=20);
 }
 
-.watermark {
+.watermark, .dealer-score, .player-score {
   color: #D1D77A;
   right: 20px;
-  padding: 20px;
   letter-spacing: .2em;
   text-align: right;
   position: absolute;
@@ -91,6 +90,12 @@ body {
   filter: alpha(opacity=30);
   font-size: 3em;
   z-index: 1;
+}
+.watermark {
+  padding: 20px;
+}
+.dealer-score, .player-score {
+  padding: 70px 20px 20px 20px;
 }
 
 .card {
