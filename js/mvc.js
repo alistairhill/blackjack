@@ -33,10 +33,12 @@ View.prototype = {
     return document.querySelector(this.flashes)
   },
   addCard: function(user, card) {
-    var userDiv = document.querySelector("." + user + "-area"),
-    cardDiv = document.createElement('div')
-    userDiv.appendChild(cardDiv).className = "card"
-    cardDiv.innerHTML = card.rank + "<p>" + card.suit + "<p>" + card.val
+    if (card != null) {
+      var userDiv = document.querySelector("." + user + "-area"),
+      cardDiv = document.createElement('div')
+      userDiv.appendChild(cardDiv).className = "card"
+      cardDiv.innerHTML = card.rank + "<p>" + card.suit + "<p>" + card.val
+    }
   },
   removeCards: function() {
     var cards = document.querySelectorAll(".card")
@@ -74,6 +76,13 @@ function Controller(view, shoe, player, dealer) {
 Controller.prototype = {
   intializeStart: function() {
     this.bindListeners()
+    this.shoe.makeDeck()
+    this.shoe.makeDeck()
+    this.shoe.makeDeck()
+    this.shoe.makeDeck()
+    this.shoe.makeDeck()
+    this.shoe.makeDeck()
+    // this.shoe.shuffle()
   },
   bindListeners: function() {
     var dealBut = this.view.getDealButton(),
@@ -84,7 +93,6 @@ Controller.prototype = {
     standBut.addEventListener('click', this.standButton.bind(this))
   },
   startRound: function() {
-    this.shoe.makeDeck()
     this.seedHands()
     this.playCards("player")
     this.playCards("dealer")
@@ -128,13 +136,11 @@ Controller.prototype = {
     this.deal("player"); this.deal("dealer"); this.deal("player"); this.deal("dealer")
   },
   dealerHand: function() {
-    while (this["dealer"].roundCardCount < 17) {
+    //added != 0 to prevent timeout
+    while (this["dealer"].roundCardCount < 17 && this["dealer"].roundCardCount != 0) {
       this.deal("dealer")
     }
-    console.log(this["dealer"].counter)
-    console.log(this["dealer"].hand.length)
     if (this["dealer"].hand.length > 2) {
-      console.log(this["dealer"].roundCardCount)
       this.playCards("dealer")
     }
   },
@@ -145,34 +151,42 @@ Controller.prototype = {
       this[user].hand.push(card)
       this[user].roundCardCount += card.val
     } else {
+      //need to make deck wedge
       console.log("deck is done!")
     }
   },
   playCards: function(user) {
-    var that = this,
-    go = setInterval(function(){
-      that.view.addCard(user, that[user].hand[that[user].counter])
-      that[user].counter +=1
-      if (that[user].counter >= that[user].hand.length) {
-        clearInterval(go)
-      }
-    }, 500)
-    //check if busted
-    if (this[user].roundCardCount > 21) {
-      if (this.checkForAce(user) == true) {
-        this[user].roundCardCount -= 10
+    if (this[user].counter < this[user].hand.length) {
+      var that = this,
+      go = setInterval(function(){
+        that.view.addCard(user, that[user].hand[that[user].counter])
+        that[user].counter +=1
+        if (that[user].counter >= that[user].hand.length) {
+          clearInterval(go)
+        }
+      }, 500)
+      //check if busted
+      if (this[user].roundCardCount > 21) {
+        if (this.checkForAce(user) == true) {
+          this[user].roundCardCount -= 10
+          //trigger more cards if dealer is auto playing
+          if (user == "dealer") {
+            this.dealerHand()
+          }
+        } else {
+          console.log(user)
+          this.userBusted(user)
+        }
       } else {
-        this.userBusted(user)
+        // console.log(user + " did not bust")
       }
-    } else {
-      // console.log(user + " did not bust")
     }
-    // console.log(user + " " + this[user].roundCardCount)
   },
   checkForAce: function(user) {
     var hand = this[user].hand
     for (var i = 0, x = hand.length; i < x; i++) {
       if (hand[i].rank == "Ace" && hand[i].val === 11) {
+        console.log(user + " got in here!")
         hand[i].val = 1
         return true
       }
@@ -183,10 +197,15 @@ Controller.prototype = {
     this.view.flashMessage("#FD4547", "#D71F20", user + " Busted with " + this[user].roundCardCount + "!")
     this.toggleBut(this.view.getHitButton(), "off")
     this.toggleBut(this.view.getStandButton(), "off")
-    // setTimeout(function() {that.gameOver()}, 1000)
+    if (user === "player") {
+      console.log("got in here")
+      setTimeout(function(){that.dealerHand()}, 1300)
+    } else {
+      setTimeout(function() {that.gameOver()}, 1300)
+    }
   },
   gameOver: function() {
-    this.shoe.cards = []
+    // this.shoe.cards = []
     this["player"].resetHand()
     this["dealer"].resetHand()
     this.view.removeCards()
