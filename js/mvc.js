@@ -73,8 +73,9 @@ View.prototype = {
       }, 40)
     }, 1800)
   },
-  updateScore: function(user) {
-
+  restScore: function() {
+    this.playerScore().innerHTML = 0
+    this.dealerScore().innerHTML = 0
   }
  }
 
@@ -87,13 +88,7 @@ function Controller(view, shoe, player, dealer) {
 Controller.prototype = {
   intializeStart: function() {
     this.bindListeners()
-    this.shoe.makeDeck()
-    this.shoe.makeDeck()
-    this.shoe.makeDeck()
-    this.shoe.makeDeck()
-    this.shoe.makeDeck()
-    this.shoe.makeDeck()
-    // this.shoe.shuffle()
+    this.shoe.makeSixDecks()
   },
   bindListeners: function() {
     var dealBut = this.view.getDealButton(),
@@ -103,15 +98,20 @@ Controller.prototype = {
     hitBut.addEventListener('click', this.hitButton.bind(this))
     standBut.addEventListener('click', this.standButton.bind(this))
   },
-  makeMultipleDecks(){
-
-  },
   startRound: function() {
-    this.seedHands()
-    this.playCards("player")
-    this.playCards("dealer")
-    this.toggleBut(this.view.getHitButton(), "on")
-    this.toggleBut(this.view.getStandButton(), "on")
+    //wedge check
+    var that = this
+    if (this.wedgeCheck() == true) {
+      this.seedHands()
+      this.playCards("player")
+      this.playCards("dealer")
+      this.toggleBut(this.view.getHitButton(), "on")
+      this.toggleBut(this.view.getStandButton(), "on")
+    } else {
+      this.view.flashMessage("#FDEFBC", "#EEE092", "Adding and shuffling decks.")
+      this.shoe.makeSixDecks()
+      setTimeout(function(){that.dealButton()}, 2000)
+    }
   },
   dealButton: function(button) {
     this.endRound()
@@ -124,16 +124,6 @@ Controller.prototype = {
   hitButton: function() {
     this.deal("player")
     this.playCards("player")
-  },
-  toggleButton: function(button) {
-    var but = button
-    if (but.disabled == true) {
-      but.disabled = false
-      but.classList.remove("grayed-out")
-    } else {
-      but.disabled = true
-      but.classList.add("grayed-out")
-    }
   },
   toggleBut: function(button, status) {
     var but = button
@@ -157,16 +147,18 @@ Controller.prototype = {
       this.playCards("dealer")
     }
   },
+  wedgeCheck: function() {
+    var deck = this.shoe.cards
+    if (deck.length > 12) return true
+  },
   deal: function(user) {
     var deck = this.shoe.cards
-    //12 cards or less will be where the wedge is placed
-    if (deck.length < 12) {
+    if (deck.length !=0) {
       var card = deck.pop()
       this[user].hand.push(card)
       this[user].roundCardCount += card.val
     } else {
-      console.log("got to shoe wedge, no more cards")
-      //run make multiple decks function
+      console.log("no more cards!")
     }
   },
   playCards: function(user) {
@@ -176,6 +168,7 @@ Controller.prototype = {
         that.view.addCard(user, that[user].hand[that[user].counter])
         that[user].counter +=1
         if (that[user].counter >= that[user].hand.length) {
+          that.view[user + "Score"]().innerHTML = that[user].roundCardCount
           clearInterval(go)
         }
       }, 500)
@@ -193,7 +186,6 @@ Controller.prototype = {
         // console.log(user + " did not bust")
       }
     }
-    this.view[user + "Score"]().innerHTML = this[user].roundCardCount
   },
   checkForAce: function(user) {
     var hand = this[user].hand
@@ -210,9 +202,9 @@ Controller.prototype = {
     this.toggleBut(this.view.getHitButton(), "off")
     this.toggleBut(this.view.getStandButton(), "off")
     if (user === "player") {
-      setTimeout(function(){that.dealerHand()}, 1300)
+      setTimeout(function(){that.dealerHand()}, 1500)
     } else {
-      setTimeout(function() {that.endRound()}, 1300)
+      setTimeout(function() {that.endRound()}, 2000)
     }
   },
   buttonsOff: function(){
@@ -224,6 +216,7 @@ Controller.prototype = {
     this["dealer"].resetHand()
     this.view.removeCards()
     this.buttonsOff()
+    this.view.restScore()
   }
 }
 
@@ -246,6 +239,10 @@ Shoe.prototype = {
         this.cards.push(new Card(rank[y], suit[i], value[y]))
       }
     }
+  },
+  makeSixDecks: function() {
+    for (var i = 0; i <=1; i++) this.makeDeck();
+    this.shuffle()
   },
   shuffle: function() {
     var deck = this.cards
