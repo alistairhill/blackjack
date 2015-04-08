@@ -9,7 +9,6 @@ window.onload = function() {
 
 function View() {
   this.pscore = ".player-score"
-  this.dscore = ".dealer-score"
   this.deal = ".deal-but"
   this.hit = ".hit-but"
   this.stand = ".stand-but"
@@ -21,9 +20,6 @@ function View() {
 View.prototype = {
   playerScore: function() {
     return document.querySelector(this.pscore)
-  },
-  dealerScore: function() {
-    return document.querySelector(this.dscore)
   },
   getDealButton: function() {
     return document.querySelector(this.deal)
@@ -47,12 +43,12 @@ View.prototype = {
     return document.querySelector(this.flipped)
   },
   flipCardBack: function(card) {
-    var cardDiv = document.querySelector(".flipped-card")
+    var cardDiv = this.getFlippedCard()
     cardDiv.className = "card"
     cardDiv.innerHTML = card.rank + "<p>" + card.suit + "<p>" + card.val
   },
   removeCards: function() {
-    var cards = document.querySelectorAll(".card")
+    var cards = document.querySelectorAll(this.card )
     for (var i = 0, x = cards.length; i < x; i++) {
       cards[i].remove()
     }
@@ -74,9 +70,15 @@ View.prototype = {
       }, 40)
     }, 1800)
   },
+  playerStatusMsg: function(won){
+    if (won == true) {
+      this.view.flashMessage("#00CD64", "#138442", "player won!")
+    } else {
+      this.view.flashMessage("#FD4547", "#D71F20", "player lost!")
+    }
+  },
   resetScore: function() {
     this.playerScore().innerHTML = 0
-    this.dealerScore().innerHTML = 0
   }
  }
 
@@ -116,8 +118,11 @@ Controller.prototype = {
     }
   },
   dealButton: function(button) {
+    var that = this
     this.endRound()
     this.startRound()
+    this.toggleBut(this.view.getDealButton(), "off")
+    setTimeout(function(){that.toggleBut(that.view.getDealButton(), "on")}, 1400)
   },
   standButton: function(button) {
     this.buttonsOff()
@@ -149,6 +154,7 @@ Controller.prototype = {
     if (this["dealer"].hand.length > 2) {
       this.playCards("dealer")
     }
+    //evaluate who won?
   },
   wedgeCheck: function() {
     var deck = this.shoe.cards
@@ -171,7 +177,7 @@ Controller.prototype = {
         that.addCard(user, that[user].hand[that[user].counter])
         that[user].counter +=1
         if (that[user].counter >= that[user].hand.length) {
-          that.view[user + "Score"]().innerHTML = that[user].roundCardCount
+          if (user == "player") that.view.playerScore().innerHTML = that.player.roundCardCount
           clearInterval(go)
         }
       }, 700)
