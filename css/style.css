@@ -105,9 +105,6 @@ body {
   width: 90px;
   height: 130px;
   border-radius: 3px;
-/*  -moz-box-shadow:    inset .1em .1em #555;
-  -webkit-box-shadow: inset .1em .1em #555;
-  box-shadow:         inset .1em .1em #555;*/
   z-index: 2;
   border: thin solid #DDD;
   padding: 2px;

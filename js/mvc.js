@@ -73,6 +73,9 @@ View.prototype = {
       this.view.flashMessage("#FD4547", "#D71F20", "player lost!")
     }
   },
+  blackJackMsg: function(user) {
+    this.flashMessage("#00CD64", "#138442", user + " got Blackjack!")
+  },
   resetScore: function() {
     this.playerScore().innerHTML = 0
   }
@@ -186,9 +189,14 @@ Controller.prototype = {
           this.buttonsOff()
           setTimeout(function(){that.userBusted(user)},1500)
         }
-      } else {
-        // console.log(user + " did not bust")
+      } else if (user == "player" && this.gotBlackJack(user) == true) {
+        setTimeout(function(){that.view.blackJackMsg(user)}, 1000)
       }
+    }
+  },
+  gotBlackJack: function(user) {
+    if (this[user].hand[0].rank == "A" && this[user].hand[1].rank == 10 || this[user].hand[1].rank == "A" && this[user].hand[0].rank == 10) {
+      return true
     }
   },
   addCard: function(user, card) {
