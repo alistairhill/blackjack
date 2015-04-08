@@ -34,28 +34,29 @@ View.prototype = {
   getStandButton: function() {
     return document.querySelector(this.stand)
   },
+  createDiv: function() {
+    return document.createElement('div')
+  },
   getUserDiv: function(user) {
     return document.querySelector("." + user + "-area")
   },
   getFlashes: function() {
     return document.querySelector(this.flashes)
   },
-  addCard: function(user, card) {
-    if (card != null) {
-      var userDiv = document.querySelector("." + user + "-area"),
-      cardDiv = document.createElement('div')
-      userDiv.appendChild(cardDiv).className = "card"
-      cardDiv.innerHTML = card.rank + "<p>" + card.suit + "<p>" + card.val
-    }
+  getFlippedCard: function() {
+    return document.querySelector(this.flipped)
+  },
+  flipCardBack: function(card) {
+    var cardDiv = document.querySelector(".flipped-card")
+    cardDiv.className = "card"
+    cardDiv.innerHTML = card.rank + "<p>" + card.suit + "<p>" + card.val
   },
   removeCards: function() {
     var cards = document.querySelectorAll(".card")
     for (var i = 0, x = cards.length; i < x; i++) {
       cards[i].remove()
     }
-    if (document.querySelector(".flipped-card") != null) {
-      document.querySelector(".flipped-card").remove()
-    }
+    if (this.getFlippedCard() != null) this.getFlippedCard().remove()
   },
   flashMessage: function(col1, col2, msg) {
     var fade = 1.0,
@@ -73,7 +74,7 @@ View.prototype = {
       }, 40)
     }, 1800)
   },
-  restScore: function() {
+  resetScore: function() {
     this.playerScore().innerHTML = 0
     this.dealerScore().innerHTML = 0
   }
@@ -120,6 +121,7 @@ Controller.prototype = {
   },
   standButton: function(button) {
     this.buttonsOff()
+    this.view.flipCardBack(this["dealer"].hand[0])
     this.dealerHand()
   },
   hitButton: function() {
@@ -166,7 +168,7 @@ Controller.prototype = {
     if (this[user].counter < this[user].hand.length) {
       var that = this,
       go = setInterval(function(){
-        that.view.addCard(user, that[user].hand[that[user].counter])
+        that.addCard(user, that[user].hand[that[user].counter])
         that[user].counter +=1
         if (that[user].counter >= that[user].hand.length) {
           that.view[user + "Score"]().innerHTML = that[user].roundCardCount
@@ -185,6 +187,18 @@ Controller.prototype = {
         }
       } else {
         // console.log(user + " did not bust")
+      }
+    }
+  },
+  addCard: function(user, card) {
+    if (card != null) {
+      var userDiv = this.view.getUserDiv(user),
+      cardDiv = this.view.createDiv()
+      if (user === "dealer" && this[user].counter == 0) {
+        userDiv.appendChild(cardDiv).className = "flipped-card"
+      } else {
+        userDiv.appendChild(cardDiv).className = "card"
+        cardDiv.innerHTML = card.rank + "<p>" + card.suit + "<p>" + card.val
       }
     }
   },
@@ -217,7 +231,7 @@ Controller.prototype = {
     this["dealer"].resetHand()
     this.view.removeCards()
     this.buttonsOff()
-    this.view.restScore()
+    this.view.resetScore()
   }
 }
 
