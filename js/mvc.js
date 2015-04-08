@@ -101,14 +101,15 @@ Controller.prototype = {
   startRound: function() {
     //wedge check
     var that = this
-    if (this.wedgeCheck() == true) {
+    if (this.shoe.checkWedge() == true) {
       this.seedHands()
       this.playCards("player")
       this.playCards("dealer")
       this.toggleBut(this.view.getHitButton(), "on")
       this.toggleBut(this.view.getStandButton(), "on")
     } else {
-      this.view.flashMessage("#FDEFBC", "#EEE092", "Adding and shuffling decks.")
+      this.view.flashMessage("#FDEFBC", "#EEE092", "Adding and shuffling new decks.")
+      this.shoe.emptyShoe()
       this.shoe.makeSixDecks()
       setTimeout(function(){that.dealButton()}, 2000)
     }
@@ -171,7 +172,7 @@ Controller.prototype = {
           that.view[user + "Score"]().innerHTML = that[user].roundCardCount
           clearInterval(go)
         }
-      }, 500)
+      }, 700)
       //check if busted
       if (this[user].roundCardCount > 21) {
         if (this.checkForAce(user) == true) {
@@ -180,7 +181,7 @@ Controller.prototype = {
           if (user == "dealer") this.dealerHand()
         } else {
           this.buttonsOff()
-          setTimeout(function(){that.userBusted(user)},1400)
+          setTimeout(function(){that.userBusted(user)},1500)
         }
       } else {
         // console.log(user + " did not bust")
@@ -241,7 +242,7 @@ Shoe.prototype = {
     }
   },
   makeSixDecks: function() {
-    for (var i = 0; i <=1; i++) this.makeDeck();
+    for (var i = 0; i <6; i++) this.makeDeck();
     this.shuffle()
   },
   shuffle: function() {
@@ -252,6 +253,14 @@ Shoe.prototype = {
       deck[i] = deck[randNum]
       deck[randNum] = tempPlace
     }
+  },
+  checkWedge: function() {
+    var deck = this.cards
+    if (deck.length > 12) return true
+  },
+  emptyShoe: function() {
+    this.cards = []
+    console.log("emptied shoe " + this.cards)
   }
 }
 
