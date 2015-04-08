@@ -14,7 +14,8 @@ function View() {
   this.stand = ".stand-but"
   this.flipped = ".flipped-card"
   this.card = ".card"
-  this.flashes = '.flashes'
+  this.flashes = ".flashes"
+  this.newCard = "card"
 }
 
 View.prototype = {
@@ -42,11 +43,6 @@ View.prototype = {
   getFlippedCard: function() {
     return document.querySelector(this.flipped)
   },
-  flipCardBack: function(card) {
-    var cardDiv = this.getFlippedCard()
-    cardDiv.className = "card"
-    cardDiv.innerHTML = card.rank + "<p>" + card.suit + "<p>" + card.val
-  },
   removeCards: function() {
     var cards = document.querySelectorAll(this.card )
     for (var i = 0, x = cards.length; i < x; i++) {
@@ -70,7 +66,7 @@ View.prototype = {
       }, 40)
     }, 1800)
   },
-  playerStatusMsg: function(won){
+  playerWinMsg: function(won){
     if (won == true) {
       this.view.flashMessage("#00CD64", "#138442", "player won!")
     } else {
@@ -126,7 +122,6 @@ Controller.prototype = {
   },
   standButton: function(button) {
     this.buttonsOff()
-    this.view.flipCardBack(this["dealer"].hand[0])
     this.dealerHand()
   },
   hitButton: function() {
@@ -147,6 +142,7 @@ Controller.prototype = {
     this.deal("player"); this.deal("dealer"); this.deal("player"); this.deal("dealer")
   },
   dealerHand: function() {
+    this.flipCardBack(this["dealer"].hand[0])
     //added != 0 to prevent timeout
     while (this["dealer"].roundCardCount < 17 && this["dealer"].roundCardCount != 0) {
       this.deal("dealer")
@@ -203,7 +199,7 @@ Controller.prototype = {
       if (user === "dealer" && this[user].counter == 0) {
         userDiv.appendChild(cardDiv).className = "flipped-card"
       } else {
-        userDiv.appendChild(cardDiv).className = "card"
+        userDiv.appendChild(cardDiv).className = this.view.newCard
         cardDiv.innerHTML = card.rank + "<p>" + card.suit + "<p>" + card.val
       }
     }
@@ -211,10 +207,18 @@ Controller.prototype = {
   checkForAce: function(user) {
     var hand = this[user].hand
     for (var i = 0, x = hand.length; i < x; i++) {
-      if (hand[i].rank == "Ace" && hand[i].val === 11) {
+      if (hand[i].rank == "Ace" && hand[i].val == 11) {
+        console.log("changing Ace Value")
         hand[i].val = 1
         return true
       }
+    }
+  },
+  flipCardBack: function(card) {
+    var cardDiv = this.view.getFlippedCard()
+    if (cardDiv != null) {
+      cardDiv.className = this.view.newCard
+      cardDiv.innerHTML = card.rank + "<p>" + card.suit + "<p>" + card.val
     }
   },
   userBusted: function(user) {
