@@ -150,7 +150,6 @@ Controller.prototype = {
     if (this["dealer"].hand.length > 2) {
       this.playCards("dealer")
     }
-    //evaluate who won?
   },
   wedgeCheck: function() {
     var deck = this.shoe.cards
@@ -198,6 +197,7 @@ Controller.prototype = {
       cardDiv = this.view.createDiv()
       if (user === "dealer" && this[user].counter == 0) {
         userDiv.appendChild(cardDiv).className = "flipped-card"
+        cardDiv.innerHTML = "Hill's<br>Casino"
       } else {
         userDiv.appendChild(cardDiv).className = this.view.newCard
         cardDiv.innerHTML = card.rank + "<p>" + card.suit + "<p>" + card.val
@@ -227,6 +227,7 @@ Controller.prototype = {
     this.toggleBut(this.view.getHitButton(), "off")
     this.toggleBut(this.view.getStandButton(), "off")
     if (user === "player") {
+      //not sure about bj rules on this
       setTimeout(function(){that.dealerHand()}, 1500)
     } else {
       setTimeout(function() {that.endRound()}, 2000)
@@ -256,8 +257,8 @@ function Shoe() {
 }
 Shoe.prototype = {
   makeDeck: function() {
-    var rank = ["Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Jack", "Queen", "King", "Ace"],
-    suit = ["Clubs", "Diamonds", "Hearts", "Spades"],
+    var rank = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"],
+    suit = ["\u2663", "\u2666", "\u2665", "\u2660"],
     value = [2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 11]
     for (var i = 0, x = suit.length; i < x; i++) {
       for (var y = 0, z = rank.length; y < z; y++) {

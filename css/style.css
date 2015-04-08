@@ -98,44 +98,36 @@ body {
   padding: 70px 20px 20px 20px;
 }
 
+.card, .flipped-card {
+  position: relative;
+  margin: 5px;
+  float: left;
+  padding: 20px 5px 0px 10px;
+  width: 85px;
+  height: 120px;
+  border-radius: 3px;
+/*  -moz-box-shadow:    inset .1em .1em #555;
+  -webkit-box-shadow: inset .1em .1em #555;
+  box-shadow:         inset .1em .1em #555;*/
+  z-index: 2;
+  text-align: center;
+  border: thin solid #DDD;
+}
 .card {
+  font-size: .9em;
 /*  -ms-transform: rotate(7deg);*/ /* IE 9 */
 /*  -webkit-transform: rotate(7deg); *//* Chrome, Safari, Opera */
-  /*background-image: url(../imgs/back.png);*/
   /*background-size: contain;*/
-  position: relative;
   background: #E7EAF1;
-  margin: 5px;
-  float: left;
-  font-size: .8em;
   color: #000;
-  padding: 10px 5px 10px 5px;
-  text-align: center;
-  border: thin solid #FDD;
-  width: 85px;
-  height: 120px;
-  border-radius: 3px;
-  -moz-box-shadow:    inset .1em .1em #DDD;
-  -webkit-box-shadow: inset .1em .1em #DDD;
-  box-shadow:         inset .1em .1em #DDD;
-  z-index: 2;
+}
+.flipped-card {
+  font-size: 1.4em;
+/*  background-size: cover;
+  background-image: url(../imgs/back.png);*/
+  background: radial-gradient(#373737, #111);
 }
 
-.flipped-card {
-  position: relative;
-  background-size: cover;
-  background-image: url(../imgs/back.png);
-  margin: 5px;
-  float: left;
-  padding: 10px 5px 10px 5px;
-  width: 85px;
-  height: 120px;
-  border-radius: 3px;
-  -moz-box-shadow:    inset .1em .1em #DDD;
-  -webkit-box-shadow: inset .1em .1em #DDD;
-  box-shadow:         inset .1em .1em #DDD;
-  z-index: 2;
-}
 
 footer {
   position: fixed;
