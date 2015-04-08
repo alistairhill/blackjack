@@ -197,10 +197,13 @@ Controller.prototype = {
       cardDiv = this.view.createDiv()
       if (user === "dealer" && this[user].counter == 0) {
         userDiv.appendChild(cardDiv).className = "flipped-card"
-        cardDiv.innerHTML = "Hill's<br>Casino"
+        cardDiv.innerHTML = "<br>Hill's<br>Casino"
       } else {
         userDiv.appendChild(cardDiv).className = this.view.newCard
-        cardDiv.innerHTML = card.rank + "<p>" + card.suit + "<p>" + card.val
+        if (card.suit == "\u2666" || card.suit == "\u2665") {
+          cardDiv.style.color = "red"
+        }
+          cardDiv.innerHTML = card.rank + "<br>" + card.suit
       }
     }
   },
@@ -218,7 +221,7 @@ Controller.prototype = {
     var cardDiv = this.view.getFlippedCard()
     if (cardDiv != null) {
       cardDiv.className = this.view.newCard
-      cardDiv.innerHTML = card.rank + "<p>" + card.suit + "<p>" + card.val
+      cardDiv.innerHTML = card.rank + "<br>" + card.suit
     }
   },
   userBusted: function(user) {

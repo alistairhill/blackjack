@@ -102,19 +102,18 @@ body {
   position: relative;
   margin: 5px;
   float: left;
-  padding: 20px 5px 0px 10px;
-  width: 85px;
-  height: 120px;
+  width: 90px;
+  height: 130px;
   border-radius: 3px;
 /*  -moz-box-shadow:    inset .1em .1em #555;
   -webkit-box-shadow: inset .1em .1em #555;
   box-shadow:         inset .1em .1em #555;*/
   z-index: 2;
-  text-align: center;
   border: thin solid #DDD;
+  padding: 2px;
 }
 .card {
-  font-size: .9em;
+  font-size: 1em;
 /*  -ms-transform: rotate(7deg);*/ /* IE 9 */
 /*  -webkit-transform: rotate(7deg); *//* Chrome, Safari, Opera */
   /*background-size: contain;*/
@@ -122,6 +121,7 @@ body {
   color: #000;
 }
 .flipped-card {
+  text-align: center;
   font-size: 1.4em;
 /*  background-size: cover;
   background-image: url(../imgs/back.png);*/
