@@ -67,7 +67,7 @@ body {
 .dealer-area, .player-area {
   margin: 10px;
   padding: 5px;
-  min-height: 155px;
+  min-height: 12em;
   overflow: auto;
   border: 3px solid #D1D77A;
   border-radius: 3px;
@@ -102,8 +102,8 @@ body {
   position: relative;
   margin: 5px;
   float: left;
-  width: 90px;
-  height: 130px;
+  width: 7em;
+  height: 10.5em;
   border-radius: 3px;
   z-index: 2;
   border: thin solid #DDD;
@@ -114,12 +114,22 @@ body {
 /*  -ms-transform: rotate(7deg);*/ /* IE 9 */
 /*  -webkit-transform: rotate(7deg); *//* Chrome, Safari, Opera */
   /*background-size: contain;*/
-  background: #E7EAF1;
+  background: #F7F2EF;
   color: #000;
 }
+.card-right {
+  transform: scaleY(-1);
+  text-align: right;
+  float: right;
+  width: 1em;
+  height: 9.2em;
+  position: relative;
+  bottom: 0;
+}
+
 .flipped-card {
   text-align: center;
-  font-size: 1.4em;
+  font-size: 1em;
 /*  background-size: cover;
   background-image: url(../imgs/back.png);*/
   background: radial-gradient(#373737, #111);

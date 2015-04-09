@@ -145,13 +145,19 @@ Controller.prototype = {
     this.deal("player"); this.deal("dealer"); this.deal("player"); this.deal("dealer")
   },
   dealerHand: function() {
+    var that = this
     this.flipCardBack(this["dealer"].hand[0])
-    //added != 0 to prevent timeout
-    while (this["dealer"].roundCardCount < 17 && this["dealer"].roundCardCount != 0) {
-      this.deal("dealer")
-    }
-    if (this["dealer"].hand.length > 2) {
-      this.playCards("dealer")
+    if (this.gotBlackJack("dealer") == true) {
+      //check for player bj
+      setTimeout(function(){that.view.blackJackMsg("dealer")}, 1000)
+    } else {
+      //added != 0 to prevent timeout
+      while (this["dealer"].roundCardCount < 17 && this["dealer"].roundCardCount != 0) {
+        this.deal("dealer")
+      }
+      if (this["dealer"].hand.length > 2) {
+        this.playCards("dealer")
+      }
     }
   },
   wedgeCheck: function() {
@@ -172,7 +178,7 @@ Controller.prototype = {
     if (this[user].counter < this[user].hand.length) {
       var that = this,
       go = setInterval(function(){
-        that.addCard(user, that[user].hand[that[user].counter])
+        that.addCardToDOM(user, that[user].hand[that[user].counter])
         that[user].counter +=1
         if (that[user].counter >= that[user].hand.length) {
           if (user == "player") that.view.playerScore().innerHTML = that.player.roundCardCount
@@ -191,18 +197,22 @@ Controller.prototype = {
         }
       } else if (user == "player" && this.gotBlackJack(user) == true) {
         setTimeout(function(){that.view.blackJackMsg(user)}, 1000)
+      } else {
+        // console.log(this[user].hand)
       }
+
     }
   },
   gotBlackJack: function(user) {
-    if (this[user].hand[0].rank == "A" && this[user].hand[1].rank == 10 || this[user].hand[1].rank == "A" && this[user].hand[0].rank == 10) {
+    if (this[user].hand[0].rank == "A" && this[user].hand[1].val == 10 || this[user].hand[1].rank == "A" && this[user].hand[0].val == 10) {
       return true
     }
   },
-  addCard: function(user, card) {
+  addCardToDOM: function(user, card) {
     if (card != null) {
       var userDiv = this.view.getUserDiv(user),
-      cardDiv = this.view.createDiv()
+      cardDiv = this.view.createDiv(),
+      cardRight = this.view.createDiv()
       if (user === "dealer" && this[user].counter == 0) {
         userDiv.appendChild(cardDiv).className = "flipped-card"
         cardDiv.innerHTML = "<br>Hill's<br>Casino"
@@ -211,7 +221,9 @@ Controller.prototype = {
         if (card.suit == "\u2666" || card.suit == "\u2665") {
           cardDiv.style.color = "red"
         }
-          cardDiv.innerHTML = card.rank + "<br>" + card.suit
+        cardDiv.innerHTML = card.rank + "<br>" + card.suit
+        cardDiv.appendChild(cardRight).className = "card-right"
+        cardRight.innerHTML = card.rank + "<br>" + card.suit
       }
     }
   },
@@ -219,7 +231,6 @@ Controller.prototype = {
     var hand = this[user].hand
     for (var i = 0, x = hand.length; i < x; i++) {
       if (hand[i].rank == "Ace" && hand[i].val == 11) {
-        console.log("changing Ace Value")
         hand[i].val = 1
         return true
       }
@@ -241,7 +252,7 @@ Controller.prototype = {
       //not sure about bj rules on this
       setTimeout(function(){that.dealerHand()}, 1500)
     } else {
-      setTimeout(function() {that.endRound()}, 2000)
+      setTimeout(function() {that.endRound()}, 1500)
     }
   },
   buttonsOff: function(){
