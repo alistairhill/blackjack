@@ -114,17 +114,29 @@ body {
 /*  -ms-transform: rotate(7deg);*/ /* IE 9 */
 /*  -webkit-transform: rotate(7deg); *//* Chrome, Safari, Opera */
   /*background-size: contain;*/
-  background: #F7F2EF;
+  background: #E8F4DC;
   color: #000;
+}
+.card-middle {
+  border-radius: 2px;
+  border: thin #BBB solid;
+  width: 4.9em;
+  height: 7.8em;
+  float: middle;
+  position: absolute;
+  left: 1.1em;
+  top: 1.45em;
 }
 .card-right {
   transform: scaleY(-1);
+  display: inline-block;
   text-align: right;
   float: right;
-  width: 1em;
+  width: .8em;
   height: 9.2em;
   position: relative;
   bottom: 0;
+  margin-right: .3em;
 }
 
 .flipped-card {

@@ -212,6 +212,7 @@ Controller.prototype = {
     if (card != null) {
       var userDiv = this.view.getUserDiv(user),
       cardDiv = this.view.createDiv(),
+      cardMiddle = this.view.createDiv()
       cardRight = this.view.createDiv()
       if (user === "dealer" && this[user].counter == 0) {
         userDiv.appendChild(cardDiv).className = "flipped-card"
@@ -222,6 +223,8 @@ Controller.prototype = {
           cardDiv.style.color = "red"
         }
         cardDiv.innerHTML = card.rank + "<br>" + card.suit
+        cardDiv.appendChild(cardMiddle).className = "card-middle"
+
         cardDiv.appendChild(cardRight).className = "card-right"
         cardRight.innerHTML = card.rank + "<br>" + card.suit
       }
