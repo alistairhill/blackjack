@@ -16,6 +16,10 @@ function View() {
   this.card = ".card"
   this.flashes = ".flashes"
   this.newCard = "card"
+  this.cardBlank = "card-middle"
+  this.cardJack = "card-jack"
+  this.cardQueen = "card-queen"
+  this.cardKing = "card-king"
 }
 
 View.prototype = {
@@ -146,7 +150,7 @@ Controller.prototype = {
   },
   dealerHand: function() {
     var that = this
-    this.flipCardBack(this["dealer"].hand[0])
+    this.flipCardBack("dealer", this["dealer"].hand[0])
     if (this.gotBlackJack("dealer") == true) {
       //check for player bj
       setTimeout(function(){that.view.blackJackMsg("dealer")}, 1000)
@@ -212,22 +216,32 @@ Controller.prototype = {
     if (card != null) {
       var userDiv = this.view.getUserDiv(user),
       cardDiv = this.view.createDiv(),
-      cardMiddle = this.view.createDiv()
+      cardMiddle = this.view.createDiv(),
       cardRight = this.view.createDiv()
       if (user === "dealer" && this[user].counter == 0) {
         userDiv.appendChild(cardDiv).className = "flipped-card"
-        cardDiv.innerHTML = "<br>Hill's<br>Casino"
       } else {
         userDiv.appendChild(cardDiv).className = this.view.newCard
         if (card.suit == "\u2666" || card.suit == "\u2665") {
           cardDiv.style.color = "red"
         }
         cardDiv.innerHTML = card.rank + "<br>" + card.suit
-        cardDiv.appendChild(cardMiddle).className = "card-middle"
-
+        cardDiv.appendChild(cardMiddle).className = this.getSuitFace(card)
+        //card middle face
         cardDiv.appendChild(cardRight).className = "card-right"
         cardRight.innerHTML = card.rank + "<br>" + card.suit
       }
+    }
+  },
+  getSuitFace: function(card) {
+    if (card.rank == "J") {
+      return this.view.cardJack
+    } else if (card.rank == "Q") {
+      return this.view.cardQueen
+    } else if (card.rank == "K") {
+      return this.view.cardKing
+    } else {
+      return this.view.cardBlank
     }
   },
   checkForAce: function(user) {
@@ -239,18 +253,25 @@ Controller.prototype = {
       }
     }
   },
-  flipCardBack: function(card) {
-    var cardDiv = this.view.getFlippedCard()
-    if (cardDiv != null) {
-      cardDiv.className = this.view.newCard
+  flipCardBack: function(user, card) {
+    if (card != null) {
+      var userDiv = this.view.getUserDiv(user),
+      cardDiv = this.view.getFlippedCard(),
+      cardMiddle = this.view.createDiv(),
+      cardRight = this.view.createDiv()
+      userDiv.appendChild(cardDiv).className = this.view.newCard
+      if (card.suit == "\u2666" || card.suit == "\u2665") {
+        cardDiv.style.color = "red"
+      }
       cardDiv.innerHTML = card.rank + "<br>" + card.suit
+      cardDiv.appendChild(cardMiddle).className = this.getSuitFace(card)
+      cardDiv.appendChild(cardRight).className = "card-right"
+      cardRight.innerHTML = card.rank + "<br>" + card.suit
     }
   },
   userBusted: function(user) {
     var that = this
     this.view.flashMessage("#FD4547", "#D71F20", user + " Busted with " + this[user].roundCardCount + "!")
-    this.toggleBut(this.view.getHitButton(), "off")
-    this.toggleBut(this.view.getStandButton(), "off")
     if (user === "player") {
       //not sure about bj rules on this
       setTimeout(function(){that.dealerHand()}, 1500)

@@ -106,26 +106,16 @@ body {
   height: 10.5em;
   border-radius: 3px;
   z-index: 2;
-  border: thin solid #DDD;
   padding: 2px;
 }
 .card {
+  border: thin solid #DDD;
   font-size: 1em;
 /*  -ms-transform: rotate(7deg);*/ /* IE 9 */
 /*  -webkit-transform: rotate(7deg); *//* Chrome, Safari, Opera */
   /*background-size: contain;*/
   background: #E8F4DC;
   color: #000;
-}
-.card-middle {
-  border-radius: 2px;
-  border: thin #BBB solid;
-  width: 4.9em;
-  height: 7.8em;
-  float: middle;
-  position: absolute;
-  left: 1.1em;
-  top: 1.45em;
 }
 .card-right {
   transform: scaleY(-1);
@@ -138,15 +128,36 @@ body {
   bottom: 0;
   margin-right: .3em;
 }
-
 .flipped-card {
+  border: thin solid #333;
   text-align: center;
   font-size: 1em;
-/*  background-size: cover;
-  background-image: url(../imgs/back.png);*/
-  background: radial-gradient(#373737, #111);
+  background-size: cover;
+  background-image: url(../imgs/back.png);
+  /*background: radial-gradient(#373737, #111);*/
 }
-
+.card-middle, .card-jack, .card-queen, .card-king {
+  border-radius: 2px;
+  border: thin #BBB solid;
+  width: 4.9em;
+  height: 7.8em;
+  float: middle;
+  position: absolute;
+  left: 1.1em;
+  top: 1.45em;
+}
+.card-jack {
+  background-size: contain;
+  background-image: url(../imgs/jack.png);
+}
+.card-queen {
+  background-size: contain;
+  background-image: url(../imgs/queen.png);
+}
+.card-king {
+  background-size: contain;
+  background-image: url(../imgs/king.png);
+}
 
 footer {
   position: fixed;
