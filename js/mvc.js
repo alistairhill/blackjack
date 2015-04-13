@@ -98,6 +98,7 @@ function Controller(view, shoe, player, dealer) {
   this.shoe = shoe
   this.player = player
   this.dealer = dealer
+  this.playerStood = 0
 }
 Controller.prototype = {
   intializeStart: function() {
@@ -139,6 +140,7 @@ Controller.prototype = {
   standButton: function(button) {
     this.buttonsToggle("off")
     this.flipCardBack(this.dealer.hand[0])
+    this.playerStood = 1
     this.dealerHand()
   },
   hitButton: function() {
@@ -161,13 +163,16 @@ Controller.prototype = {
   dealerHand: function() {
     var that = this
     if (this.gotBlackJack("dealer") == true) {
-      setTimeout(function(){that.whoWon()}, 1500)
+      setTimeout(function(){that.whoWon()}, 1000)
     } else {
       //added != 0 to prevent timeout
       while (this["dealer"].roundCardCount < 17 && this["dealer"].roundCardCount != 0) {
         this.deal("dealer")
       }
-      if (this["dealer"].hand.length > 2) {
+      //if player stood and dealer added no cards
+      if (this.playerStood == 1 && this["dealer"].hand.length == 2) {
+        setTimeout(function(){that.whoWon()}, 1000)
+      } else if (this["dealer"].hand.length > 2) {
         this.playCards("dealer")
       }
     }
@@ -192,16 +197,20 @@ Controller.prototype = {
       go = setInterval(function(){
         that.addCardToDOM(user, that[user].hand[that[user].counter])
         that[user].counter +=1
+        //clear interval
         if (that[user].counter >= that[user].hand.length) {
           that.view[user + "Score"]().innerHTML = that[user].roundCardCount
           // if (user == "player") that.view.playerScore().innerHTML = that.player.roundCardCount
           clearInterval(go)
-          that.checkBusted(user)
+          if (that.dealer.counter > 2) {
+            setTimeout(function(){that.whoWon()}, 1000)
+          }
         }
       }, 700)
     }
+    that.checkHand(user)
   },
-  checkBusted: function(user) {
+  checkHand: function(user) {
     var that = this
     if (this[user].roundCardCount > 21) {
       if (this.checkForAce(user) == true) {
@@ -214,9 +223,10 @@ Controller.prototype = {
       // setTimeout(function(){that.whoWon()}, 1500)
       }
     } else if (user == "player" && this.gotBlackJack(user) == true) {
-      setTimeout(function(){that.view.blackJackMsg(user)}, 1000)
-    } else if (user == "dealer" && this["dealer"].hand.length > 2) {
-      setTimeout(function(){that.whoWon()}, 1500)
+      setTimeout(function(){
+        that.view.blackJackMsg(user)
+      //payout x1.5 if dealer does not have bj
+      }, 1000)
     }
   },
   whoWon: function() {
@@ -293,13 +303,9 @@ Controller.prototype = {
   userBusted: function(user) {
     var that = this
     // this.view.flashMessage("#FD4547", "#D71F20", user + " Busted with " + this[user].roundCardCount + "!")
-    this.whoWon()
-    if (user === "player") {
-      //not sure about bj rules on this
-      setTimeout(function(){that.dealerHand()}, 1500)
-    } else {
-      setTimeout(function() {that.endRound()}, 1500)
-    }
+    setTimeout(function() {
+      that.whoWon()
+      that.endRound()}, 1500)
   },
   buttonsToggle: function(status){
     this.toggleBut(this.view.getHitButton(), status)
@@ -311,6 +317,7 @@ Controller.prototype = {
     this.view.removeCards()
     this.buttonsToggle("off")
     this.view.resetScore()
+    this.playerStood = 0
   }
 }
 
