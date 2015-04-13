@@ -8,7 +8,8 @@ window.onload = function() {
 }
 
 function View() {
-  this.pscore = ".player-score"
+  this.pScore = ".player-score"
+  this.dScore = ".dealer-score"
   this.deal = ".deal-but"
   this.hit = ".hit-but"
   this.stand = ".stand-but"
@@ -24,7 +25,10 @@ function View() {
 
 View.prototype = {
   playerScore: function() {
-    return document.querySelector(this.pscore)
+    return document.querySelector(this.pScore)
+  },
+  dealerScore: function() {
+    return document.querySelector(this.dScore)
   },
   getDealButton: function() {
     return document.querySelector(this.deal)
@@ -72,15 +76,19 @@ View.prototype = {
   },
   playerWinMsg: function(won){
     if (won == true) {
-      this.view.flashMessage("#00CD64", "#138442", "player won!")
+      this.flashMessage("#00CD64", "#138442", "player won!")
     } else {
-      this.view.flashMessage("#FD4547", "#D71F20", "player lost!")
+      this.flashMessage("#FD4547", "#D71F20", "player lost!")
     }
+  },
+  pushMsg: function() {
+    this.flashMessage("#FDEFBC", "#EEE092", "push...")
   },
   blackJackMsg: function(user) {
     this.flashMessage("#00CD64", "#138442", user + " got Blackjack!")
   },
   resetScore: function() {
+    this.dealerScore().innerHTML = 0
     this.playerScore().innerHTML = 0
   }
  }
@@ -90,6 +98,7 @@ function Controller(view, shoe, player, dealer) {
   this.shoe = shoe
   this.player = player
   this.dealer = dealer
+  this.flipCounter = 0
 }
 Controller.prototype = {
   intializeStart: function() {
@@ -129,6 +138,7 @@ Controller.prototype = {
   },
   standButton: function(button) {
     this.buttonsOff()
+    this.flipCardBack(this.dealer.hand[0])
     this.dealerHand()
   },
   hitButton: function() {
@@ -150,10 +160,8 @@ Controller.prototype = {
   },
   dealerHand: function() {
     var that = this
-    this.flipCardBack("dealer", this["dealer"].hand[0])
     if (this.gotBlackJack("dealer") == true) {
-      //check for player bj
-      setTimeout(function(){that.view.blackJackMsg("dealer")}, 1000)
+      setTimeout(function(){that.whoWon()}, 1500)
     } else {
       //added != 0 to prevent timeout
       while (this["dealer"].roundCardCount < 17 && this["dealer"].roundCardCount != 0) {
@@ -185,26 +193,43 @@ Controller.prototype = {
         that.addCardToDOM(user, that[user].hand[that[user].counter])
         that[user].counter +=1
         if (that[user].counter >= that[user].hand.length) {
-          if (user == "player") that.view.playerScore().innerHTML = that.player.roundCardCount
+          that.view[user + "Score"]().innerHTML = that[user].roundCardCount
+          // if (user == "player") that.view.playerScore().innerHTML = that.player.roundCardCount
           clearInterval(go)
+          that.checkBusted(user)
         }
       }, 700)
-      //check if busted
-      if (this[user].roundCardCount > 21) {
-        if (this.checkForAce(user) == true) {
-          this[user].roundCardCount -= 10
-          //trigger more cards for auto dealer
-          if (user == "dealer") this.dealerHand()
-        } else {
-          this.buttonsOff()
-          setTimeout(function(){that.userBusted(user)},1500)
-        }
-      } else if (user == "player" && this.gotBlackJack(user) == true) {
-        setTimeout(function(){that.view.blackJackMsg(user)}, 1000)
+    }
+  },
+  checkBusted: function(user) {
+    var that = this
+    if (this[user].roundCardCount > 21) {
+      if (this.checkForAce(user) == true) {
+        this[user].roundCardCount -= 10
+        //trigger more cards for auto dealer
+        if (user === "dealer") this.dealerHand()
       } else {
-        // console.log(this[user].hand)
+        this.buttonsOff()
+        user == "dealer" ? this.view.playerWinMsg(true) : this.view.playerWinMsg(false)
+      // setTimeout(function(){that.whoWon()}, 1500)
       }
-
+    } else if (user == "player" && this.gotBlackJack(user) == true) {
+      setTimeout(function(){that.view.blackJackMsg(user)}, 1000)
+    } else if (user == "dealer" && this["dealer"].hand.length > 2) {
+      setTimeout(function(){that.whoWon()}, 1500)
+    }
+  },
+  whoWon: function() {
+    var dealerHand = this["dealer"].roundCardCount,
+    playerHand = this["player"].roundCardCount
+    if (playerHand <=21 && dealerHand <=21) {
+      if (dealerHand > playerHand || (this.gotBlackJack("dealer") == true && this.gotBlackJack("player") == false) ) {
+        this.view.playerWinMsg(false)
+      } else if ((playerHand == dealerHand) || (this.gotBlackJack("player") == true && this.gotBlackJack("dealer") == true)) {
+        this.view.pushMsg()
+      } else {
+        this.view.playerWinMsg(true)
+      }
     }
   },
   gotBlackJack: function(user) {
@@ -227,11 +252,25 @@ Controller.prototype = {
         }
         cardDiv.innerHTML = card.rank + "<br>" + card.suit
         cardDiv.appendChild(cardMiddle).className = this.getSuitFace(card)
-        //card middle face
         cardDiv.appendChild(cardRight).className = "card-right"
         cardRight.innerHTML = card.rank + "<br>" + card.suit
       }
     }
+  },
+  flipCardBack: function(card) {
+    this.flipCounter +=1
+    console.log(this.flipCounter)
+    var flippedCard = this.view.getFlippedCard(),
+    cardMiddle = this.view.createDiv(),
+    cardRight = this.view.createDiv()
+    flippedCard.className = "card"
+    if (card.suit == "\u2666" || card.suit == "\u2665") {
+      flippedCard.style.color = "red"
+    }
+    flippedCard.innerHTML = card.rank + "<br>" + card.suit
+    flippedCard.appendChild(cardMiddle).className = this.getSuitFace(card)
+    flippedCard.appendChild(cardRight).className = "card-right"
+    cardRight.innerHTML = card.rank + "<br>" + card.suit
   },
   getSuitFace: function(card) {
     if (card.rank == "J") {
@@ -247,31 +286,16 @@ Controller.prototype = {
   checkForAce: function(user) {
     var hand = this[user].hand
     for (var i = 0, x = hand.length; i < x; i++) {
-      if (hand[i].rank == "Ace" && hand[i].val == 11) {
+      if (hand[i].rank == "A" && hand[i].val == 11) {
         hand[i].val = 1
         return true
       }
     }
   },
-  flipCardBack: function(user, card) {
-    if (card != null) {
-      var userDiv = this.view.getUserDiv(user),
-      cardDiv = this.view.getFlippedCard(),
-      cardMiddle = this.view.createDiv(),
-      cardRight = this.view.createDiv()
-      userDiv.appendChild(cardDiv).className = this.view.newCard
-      if (card.suit == "\u2666" || card.suit == "\u2665") {
-        cardDiv.style.color = "red"
-      }
-      cardDiv.innerHTML = card.rank + "<br>" + card.suit
-      cardDiv.appendChild(cardMiddle).className = this.getSuitFace(card)
-      cardDiv.appendChild(cardRight).className = "card-right"
-      cardRight.innerHTML = card.rank + "<br>" + card.suit
-    }
-  },
   userBusted: function(user) {
     var that = this
-    this.view.flashMessage("#FD4547", "#D71F20", user + " Busted with " + this[user].roundCardCount + "!")
+    // this.view.flashMessage("#FD4547", "#D71F20", user + " Busted with " + this[user].roundCardCount + "!")
+    this.whoWon()
     if (user === "player") {
       //not sure about bj rules on this
       setTimeout(function(){that.dealerHand()}, 1500)
