@@ -91,14 +91,13 @@ View.prototype = {
     this.dealerScore().innerHTML = 0
     this.playerScore().innerHTML = 0
   }
- }
+}
 
 function Controller(view, shoe, player, dealer) {
   this.view = view
   this.shoe = shoe
   this.player = player
   this.dealer = dealer
-  this.flipCounter = 0
 }
 Controller.prototype = {
   intializeStart: function() {
@@ -120,8 +119,6 @@ Controller.prototype = {
       this.seedHands()
       this.playCards("player")
       this.playCards("dealer")
-      this.toggleBut(this.view.getHitButton(), "on")
-      this.toggleBut(this.view.getStandButton(), "on")
     } else {
       this.view.flashMessage("#FDEFBC", "#EEE092", "Adding and shuffling new decks.")
       this.shoe.emptyShoe()
@@ -134,10 +131,13 @@ Controller.prototype = {
     this.endRound()
     this.startRound()
     this.toggleBut(this.view.getDealButton(), "off")
-    setTimeout(function(){that.toggleBut(that.view.getDealButton(), "on")}, 1400)
+    setTimeout(function(){that.toggleBut(
+      that.view.getDealButton(), "on")
+      that.buttonsToggle("on")
+  }, 1400)
   },
   standButton: function(button) {
-    this.buttonsOff()
+    this.buttonsToggle("off")
     this.flipCardBack(this.dealer.hand[0])
     this.dealerHand()
   },
@@ -209,7 +209,7 @@ Controller.prototype = {
         //trigger more cards for auto dealer
         if (user === "dealer") this.dealerHand()
       } else {
-        this.buttonsOff()
+        this.buttonsToggle("off")
         user == "dealer" ? this.view.playerWinMsg(true) : this.view.playerWinMsg(false)
       // setTimeout(function(){that.whoWon()}, 1500)
       }
@@ -258,8 +258,6 @@ Controller.prototype = {
     }
   },
   flipCardBack: function(card) {
-    this.flipCounter +=1
-    console.log(this.flipCounter)
     var flippedCard = this.view.getFlippedCard(),
     cardMiddle = this.view.createDiv(),
     cardRight = this.view.createDiv()
@@ -303,15 +301,15 @@ Controller.prototype = {
       setTimeout(function() {that.endRound()}, 1500)
     }
   },
-  buttonsOff: function(){
-    this.toggleBut(this.view.getHitButton(), "off")
-    this.toggleBut(this.view.getStandButton(), "off")
+  buttonsToggle: function(status){
+    this.toggleBut(this.view.getHitButton(), status)
+    this.toggleBut(this.view.getStandButton(), status)
   },
   endRound: function() {
     this["player"].resetHand()
     this["dealer"].resetHand()
     this.view.removeCards()
-    this.buttonsOff()
+    this.buttonsToggle("off")
     this.view.resetScore()
   }
 }
