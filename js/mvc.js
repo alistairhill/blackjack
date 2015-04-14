@@ -218,9 +218,11 @@ Controller.prototype = {
         //trigger more cards for auto dealer
         if (user === "dealer") this.dealerHand()
       } else {
+        //if no recovery, decide who won
         this.buttonsToggle("off")
-        user == "dealer" ? this.view.playerWinMsg(true) : this.view.playerWinMsg(false)
-      // setTimeout(function(){that.whoWon()}, 1500)
+        setTimeout(function(){
+          user == "dealer" ? that.view.playerWinMsg(true) : that.view.playerWinMsg(false)
+        }, 1000)
       }
     } else if (user == "player" && this.gotBlackJack(user) == true) {
       setTimeout(function(){
@@ -300,13 +302,6 @@ Controller.prototype = {
       }
     }
   },
-  userBusted: function(user) {
-    var that = this
-    // this.view.flashMessage("#FD4547", "#D71F20", user + " Busted with " + this[user].roundCardCount + "!")
-    setTimeout(function() {
-      that.whoWon()
-      that.endRound()}, 1500)
-  },
   buttonsToggle: function(status){
     this.toggleBut(this.view.getHitButton(), status)
     this.toggleBut(this.view.getStandButton(), status)
@@ -369,10 +364,19 @@ function User(name) {
   this.hand = []
   this.roundCardCount = 0
   this.counter = 0
-  this.money = 0
+  this.money = 1000
+  this.bet = 100
 }
-User.prototype.resetHand = function() {
-  this.hand = []
-  this.roundCardCount = 0
-  this.counter = 0
+User.prototype = {
+  addMoney: function(amount) {
+    this.money += amount
+  },
+  decreaseMoney: function(amount) {
+    this.money -= amount
+  },
+  resetHand: function() {
+    this.hand = []
+    this.roundCardCount = 0
+    this.counter = 0
+  }
 }
