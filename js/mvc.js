@@ -21,6 +21,8 @@ function View() {
   this.cardJack = "card-jack"
   this.cardQueen = "card-queen"
   this.cardKing = "card-king"
+  this.money = ".player-money"
+  this.bet = ".player-bet"
 }
 
 View.prototype = {
@@ -29,6 +31,15 @@ View.prototype = {
   },
   dealerScore: function() {
     return document.querySelector(this.dScore)
+  },
+  updatePlayerBet: function(){
+    return document.querySelector(this.bet)
+  },
+  getPlayerBet: function() {
+    return Number(this.updatePlayerBet().innerHTML)
+  },
+  playerMoney: function() {
+    return document.querySelector(this.money)
   },
   getDealButton: function() {
     return document.querySelector(this.deal)
@@ -90,6 +101,9 @@ View.prototype = {
   resetScore: function() {
     this.dealerScore().innerHTML = 0
     this.playerScore().innerHTML = 0
+  },
+  updateMoney: function(amount) {
+    this.playerMoney().innerHTML = "$" + amount
   }
 }
 
@@ -211,7 +225,8 @@ Controller.prototype = {
     that.checkHand(user)
   },
   checkHand: function(user) {
-    var that = this
+    var that = this,
+    amount = this.view.getPlayerBet()
     if (this[user].roundCardCount > 21) {
       if (this.checkForAce(user) == true) {
         this[user].roundCardCount -= 10
@@ -221,7 +236,14 @@ Controller.prototype = {
         //if no recovery, decide who won
         this.buttonsToggle("off")
         setTimeout(function(){
-          user == "dealer" ? that.view.playerWinMsg(true) : that.view.playerWinMsg(false)
+          if (user == "dealer") {
+            that.view.playerWinMsg(true)
+            that.player.increaseBet(amount)
+          } else {
+            that.view.playerWinMsg(false)
+            that.player.decreaseBet(amount)
+          }
+          that.view.updateMoney(that.player.money)
         }, 1000)
       }
     } else if (user == "player" && this.gotBlackJack(user) == true) {
@@ -233,15 +255,19 @@ Controller.prototype = {
   },
   whoWon: function() {
     var dealerHand = this["dealer"].roundCardCount,
-    playerHand = this["player"].roundCardCount
+    playerHand = this["player"].roundCardCount,
+    amount = this.view.getPlayerBet()
     if (playerHand <=21 && dealerHand <=21) {
       if (dealerHand > playerHand || (this.gotBlackJack("dealer") == true && this.gotBlackJack("player") == false) ) {
         this.view.playerWinMsg(false)
+        this.player.decreaseBet(amount)
       } else if ((playerHand == dealerHand) || (this.gotBlackJack("player") == true && this.gotBlackJack("dealer") == true)) {
         this.view.pushMsg()
       } else {
         this.view.playerWinMsg(true)
+        this.player.increaseBet(amount)
       }
+      this.view.updateMoney(this.player.money)
     }
   },
   gotBlackJack: function(user) {
@@ -306,6 +332,7 @@ Controller.prototype = {
     this.toggleBut(this.view.getHitButton(), status)
     this.toggleBut(this.view.getStandButton(), status)
   },
+
   endRound: function() {
     this["player"].resetHand()
     this["dealer"].resetHand()
@@ -364,15 +391,14 @@ function User(name) {
   this.hand = []
   this.roundCardCount = 0
   this.counter = 0
-  this.money = 1000
-  this.bet = 100
+  this.money = 5000
 }
 User.prototype = {
-  addMoney: function(amount) {
-    this.money += amount
+  increaseBet: function(bet) {
+    this.money += bet
   },
-  decreaseMoney: function(amount) {
-    this.money -= amount
+  decreaseBet: function(bet) {
+    this.money -= bet
   },
   resetHand: function() {
     this.hand = []
