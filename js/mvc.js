@@ -249,7 +249,12 @@ Controller.prototype = {
     } else if (user == "player" && this.gotBlackJack(user) == true) {
       setTimeout(function(){
         that.view.blackJackMsg(user)
-      //payout x1.5 if dealer does not have bj
+        //payout x1.5 bet if dealer does not have bj
+        if (that.gotBlackJack("dealer") != true) {
+          var blackJackBet = amount * 1.5
+          that.player.increaseBet(blackJackBet)
+          that.view.updateMoney(that.player.money)
+        }
       }, 1000)
     }
   },
