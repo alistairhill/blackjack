@@ -23,6 +23,8 @@ function View() {
   this.cardKing = "card-king"
   this.money = ".player-money"
   this.bet = ".player-bet"
+  this.dBet = ".dbet-but"
+  this.iBet = ".ibet-but"
 }
 
 View.prototype = {
@@ -49,6 +51,12 @@ View.prototype = {
   },
   getStandButton: function() {
     return document.querySelector(this.stand)
+  },
+  getdBetButton: function() {
+    return document.querySelector(this.dBet)
+  },
+  getiBetButton: function() {
+    return document.querySelector(this.iBet)
   },
   createDiv: function() {
     return document.createElement('div')
@@ -122,10 +130,14 @@ Controller.prototype = {
   bindListeners: function() {
     var dealBut = this.view.getDealButton(),
     hitBut = this.view.getHitButton(),
-    standBut = this.view.getStandButton()
+    standBut = this.view.getStandButton(),
+    decBetBut = this.view.getdBetButton(),
+    incBetBut = this.view.getiBetButton()
     dealBut.addEventListener('click', this.dealButton.bind(this))
     hitBut.addEventListener('click', this.hitButton.bind(this))
     standBut.addEventListener('click', this.standButton.bind(this))
+    decBetBut.addEventListener('click', this.decBetButton.bind(this))
+    incBetBut.addEventListener('click', this.incBetButton.bind(this))
   },
   startRound: function() {
     //wedge check
@@ -146,10 +158,16 @@ Controller.prototype = {
     this.endRound()
     this.startRound()
     this.toggleBut(this.view.getDealButton(), "off")
+    this.toggleBut(this.view.getiBetButton(), "off")
+    this.toggleBut(this.view.getdBetButton(), "off")
     setTimeout(function(){that.toggleBut(
       that.view.getDealButton(), "on")
       that.buttonsToggle("on")
   }, 1400)
+  },
+  hitButton: function() {
+    this.deal("player")
+    this.playCards("player")
   },
   standButton: function(button) {
     this.buttonsToggle("off")
@@ -157,9 +175,17 @@ Controller.prototype = {
     this.playerStood = 1
     this.dealerHand()
   },
-  hitButton: function() {
-    this.deal("player")
-    this.playCards("player")
+  decBetButton: function() {
+    var debit = 100
+    if (this.player.bet >0) {
+      this.player.bet -= debit
+      this.view.updatePlayerBet().innerHTML = this.player.bet
+    }
+  },
+  incBetButton: function() {
+    var debit = 100
+    this.player.bet += debit
+    this.view.updatePlayerBet().innerHTML = this.player.bet
   },
   toggleBut: function(button, status) {
     var but = button
@@ -343,6 +369,8 @@ Controller.prototype = {
     this["dealer"].resetHand()
     this.view.removeCards()
     this.buttonsToggle("off")
+    this.toggleBut(this.view.getiBetButton(), "on")
+    this.toggleBut(this.view.getdBetButton(), "on")
     this.view.resetScore()
     this.playerStood = 0
   }
@@ -397,6 +425,7 @@ function User(name) {
   this.roundCardCount = 0
   this.counter = 0
   this.money = 5000
+  this.bet = 100
 }
 User.prototype = {
   increaseBet: function(bet) {

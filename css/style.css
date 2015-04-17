@@ -33,7 +33,7 @@ body {
   height: 22px;
   border-radius: 3px;
   width: 97%;
-  margin: 0 auto 0 auto;
+  margin: 0 auto -10px auto;
   letter-spacing: 0.1em;
   /*blue #20BFDE #009DBD*/
   /*beige #FDEFBC #EEE092*/
@@ -49,6 +49,8 @@ body {
   border-radius: 3px;
 }
 .deal-but, .hit-but, .stand-but, .dbet-but, .ibet-but {
+  margin-top: 10px;
+
   background: transparent;
   color: #D1D77A;
   letter-spacing: 0.2em;
