@@ -147,13 +147,17 @@ Controller.prototype = {
     var that = this
     if (this.shoe.checkWedge() == true) {
       this.seedHands()
-      this.playCards("player")
-      this.playCards("dealer")
+        this.playCards("player")
+      setTimeout(function(){
+        that.seedHands()
+        that.playCards("dealer")
+        setTimeout(function(){that.playCards("player")},1400)
+      }, 700)
     } else {
       this.view.flashMessage("#FDEFBC", "#EEE092", "Adding and shuffling new decks.")
       this.shoe.emptyShoe()
       this.shoe.makeSixDecks()
-      setTimeout(function(){that.dealButton()}, 2000)
+      setTimeout(function(){that.dealButton()}, 2800)
     }
   },
   dealButton: function(button) {
@@ -163,7 +167,7 @@ Controller.prototype = {
     this.toggleBetButtons("off")
     setTimeout(function(){
       that.buttonsToggle("on")
-  }, 1400)
+  }, 2800)
   },
   hitButton: function() {
     this.deal("player")
@@ -200,7 +204,7 @@ Controller.prototype = {
     }
   },
   seedHands: function() {
-    this.deal("player"); this.deal("dealer"); this.deal("player"); this.deal("dealer")
+    this.deal("player"); this.deal("dealer");
   },
   dealerHand: function() {
     var that = this
@@ -236,21 +240,21 @@ Controller.prototype = {
   playCards: function(user) {
     if (this[user].counter < this[user].hand.length) {
       var that = this,
-      go = setInterval(function(){
+      dealEm = setInterval(function(){
         that.addCardToDOM(user, that[user].hand[that[user].counter])
         that[user].counter +=1
         //clear interval
         if (that[user].counter >= that[user].hand.length) {
-          that.view[user + "Score"]().innerHTML = that[user].roundCardCount
-          // if (user == "player") that.view.playerScore().innerHTML = that.player.roundCardCount
-          clearInterval(go)
+          // that.view[user + "Score"]().innerHTML = that[user].roundCardCount
+          if (user == "player") that.view.playerScore().innerHTML = that.player.roundCardCount
+          clearInterval(dealEm)
           if (that.dealer.counter > 2) {
             setTimeout(function(){that.whoWon()}, 1000)
           }
         }
       }, 700)
     }
-    that.checkHand(user)
+    if (this.dealer.hand.length >=2) that.checkHand(user)
   },
   checkHand: function(user) {
     var that = this,
