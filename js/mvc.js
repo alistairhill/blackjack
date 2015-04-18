@@ -110,6 +110,9 @@ View.prototype = {
     this.dealerScore().innerHTML = 0
     this.playerScore().innerHTML = 0
   },
+  resetBet: function() {
+    this.updatePlayerBet().innerHTML = "100"
+  },
   updateMoney: function(amount) {
     this.playerMoney().innerHTML = "$" + amount
   }
@@ -157,11 +160,8 @@ Controller.prototype = {
     var that = this
     this.endRound()
     this.startRound()
-    this.toggleBut(this.view.getDealButton(), "off")
-    this.toggleBut(this.view.getiBetButton(), "off")
-    this.toggleBut(this.view.getdBetButton(), "off")
-    setTimeout(function(){that.toggleBut(
-      that.view.getDealButton(), "on")
+    this.toggleBetButtons("off")
+    setTimeout(function(){
       that.buttonsToggle("on")
   }, 1400)
   },
@@ -184,8 +184,10 @@ Controller.prototype = {
   },
   incBetButton: function() {
     var debit = 100
-    this.player.bet += debit
-    this.view.updatePlayerBet().innerHTML = this.player.bet
+    if (this.player.bet < this.player.money) {
+      this.player.bet += debit
+      this.view.updatePlayerBet().innerHTML = this.player.bet
+    }
   },
   toggleBut: function(button, status) {
     var but = button
@@ -270,6 +272,9 @@ Controller.prototype = {
             that.player.decreaseBet(amount)
           }
           that.view.updateMoney(that.player.money)
+          that.toggleBetButtons("on")
+          that.view.resetBet()
+          that.player.bet = 100
         }, 1000)
       }
     } else if (user == "player" && this.gotBlackJack(user) == true) {
@@ -299,6 +304,9 @@ Controller.prototype = {
         this.player.increaseBet(amount)
       }
       this.view.updateMoney(this.player.money)
+      this.toggleBetButtons("on")
+      this.view.resetBet()
+      this.player.bet = 100
     }
   },
   gotBlackJack: function(user) {
@@ -363,14 +371,16 @@ Controller.prototype = {
     this.toggleBut(this.view.getHitButton(), status)
     this.toggleBut(this.view.getStandButton(), status)
   },
-
+  toggleBetButtons: function(status) {
+    this.toggleBut(this.view.getdBetButton(), status)
+    this.toggleBut(this.view.getiBetButton(), status)
+    this.toggleBut(this.view.getDealButton(), status)
+  },
   endRound: function() {
     this["player"].resetHand()
     this["dealer"].resetHand()
     this.view.removeCards()
     this.buttonsToggle("off")
-    this.toggleBut(this.view.getiBetButton(), "on")
-    this.toggleBut(this.view.getdBetButton(), "on")
     this.view.resetScore()
     this.playerStood = 0
   }
