@@ -107,7 +107,7 @@ View.prototype = {
     this.flashMessage("#00CD64", "#138442", user + " got Blackjack!")
   },
   resetScore: function() {
-    this.dealerScore().innerHTML = 0
+    // this.dealerScore().innerHTML = 0
     this.playerScore().innerHTML = 0
   },
   resetBet: function() {
@@ -154,27 +154,31 @@ Controller.prototype = {
         setTimeout(function(){that.playCards("player")},1400)
       }, 700)
     } else {
-      this.view.flashMessage("#FDEFBC", "#EEE092", "Adding and shuffling new decks.")
-      this.shoe.emptyShoe()
-      this.shoe.makeSixDecks()
+      this.reshuffle()
       setTimeout(function(){that.dealButton()}, 2800)
     }
+  },
+  reshuffle: function() {
+    var that = this
+    // this.view.flashMessage("#FDEFBC", "#EEE092", "Adding and shuffling new decks.")
+    this.shoe.empty()
+    this.shoe.makeSixDecks()
   },
   dealButton: function(button) {
     var that = this
     this.endRound()
     this.startRound()
-    this.toggleBetButtons("off")
+    this.toggleInitialButtons("off")
     setTimeout(function(){
-      that.buttonsToggle("on")
-  }, 2800)
+      that.toggleDecisionButtons("on")
+    }, 2800)
   },
   hitButton: function() {
     this.deal("player")
     this.playCards("player")
   },
   standButton: function(button) {
-    this.buttonsToggle("off")
+    this.toggleDecisionButtons("off")
     this.flipCardBack(this.dealer.hand[0])
     this.playerStood = 1
     this.dealerHand()
@@ -266,7 +270,7 @@ Controller.prototype = {
         if (user === "dealer") this.dealerHand()
       } else {
         //if no recovery, decide who won
-        this.buttonsToggle("off")
+        this.toggleDecisionButtons("off")
         setTimeout(function(){
           if (user == "dealer") {
             that.view.playerWinMsg(true)
@@ -276,9 +280,12 @@ Controller.prototype = {
             that.player.decreaseBet(amount)
           }
           that.view.updateMoney(that.player.money)
-          that.toggleBetButtons("on")
-          that.view.resetBet()
-          that.player.bet = 100
+          //game over if player has no more money
+          if (that.player.money <= 0) {
+            that.gameOver()
+          } else {
+            that.toggleInitialButtons("on")
+          }
         }, 1000)
       }
     } else if (user == "player" && this.gotBlackJack(user) == true) {
@@ -308,9 +315,12 @@ Controller.prototype = {
         this.player.increaseBet(amount)
       }
       this.view.updateMoney(this.player.money)
-      this.toggleBetButtons("on")
-      this.view.resetBet()
-      this.player.bet = 100
+    }
+    //game over if player has no more money
+    if (this.player.money <= 0) {
+      this.gameOver()
+    } else {
+      this.toggleInitialButtons("on")
     }
   },
   gotBlackJack: function(user) {
@@ -371,11 +381,11 @@ Controller.prototype = {
       }
     }
   },
-  buttonsToggle: function(status){
+  toggleDecisionButtons: function(status){
     this.toggleBut(this.view.getHitButton(), status)
     this.toggleBut(this.view.getStandButton(), status)
   },
-  toggleBetButtons: function(status) {
+  toggleInitialButtons: function(status) {
     this.toggleBut(this.view.getdBetButton(), status)
     this.toggleBut(this.view.getiBetButton(), status)
     this.toggleBut(this.view.getDealButton(), status)
@@ -384,9 +394,24 @@ Controller.prototype = {
     this["player"].resetHand()
     this["dealer"].resetHand()
     this.view.removeCards()
-    this.buttonsToggle("off")
+    this.toggleDecisionButtons("off")
     this.view.resetScore()
     this.playerStood = 0
+  },
+  gameOver: function() {
+    var that = this
+    this.toggleInitialButtons("off")
+    this.toggleDecisionButtons("off")
+    setTimeout(function(){
+      that.endRound()
+      that.view.flashMessage("#222", "#000", "GAME OVER!")
+      that.reshuffle()
+      that.player.money = 5000
+      that.view.updateMoney(5000)
+      that.player.bet = 100
+      that.view.resetBet()
+      that.toggleInitialButtons("on")
+    }, 2400)
   }
 }
 
@@ -427,7 +452,7 @@ Shoe.prototype = {
     var deck = this.cards
     if (deck.length > 12) return true
   },
-  emptyShoe: function() {
+  empty: function() {
     this.cards = []
     console.log("emptied shoe " + this.cards)
   }
