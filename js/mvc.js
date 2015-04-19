@@ -328,6 +328,9 @@ Controller.prototype = {
       return true
     }
   },
+  rand: function() {
+    return Math.floor(Math.random() * 7)
+  },
   addCardToDOM: function(user, card) {
     if (card != null) {
       var userDiv = this.view.getUserDiv(user),
@@ -346,6 +349,7 @@ Controller.prototype = {
         cardDiv.appendChild(cardRight).className = "card-right"
         cardRight.innerHTML = card.rank + "<br>" + card.suit
       }
+      cardDiv.style.webkitTransform = "rotate(" + this.rand()  + "deg)"
     }
   },
   flipCardBack: function(card) {
