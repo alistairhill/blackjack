@@ -437,9 +437,11 @@ Shoe.prototype = {
   },
   makeSixDecks: function() {
     for (var i = 0; i <6; i++) this.makeDeck();
+    console.log("adding " + i + " new decks: " + this.cards.length + " cards" )
     this.shuffle()
   },
   shuffle: function() {
+    console.log("shuffling cards")
     var deck = this.cards
     for (var i = deck.length-1, x = 0, randNum, tempPlace; i >= x; i--) {
       randNum = Math.floor(Math.random() * i)
