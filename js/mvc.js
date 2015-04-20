@@ -25,7 +25,7 @@ function View() {
   this.bet = ".player-bet"
   this.dBet = ".dbet-but"
   this.iBet = ".ibet-but"
-  this.cardSound = new Audio("sounds/card.wav")
+  this.cardSound = new Audio("sounds/card.mp3")
 }
 
 View.prototype = {
