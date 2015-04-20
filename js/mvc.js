@@ -25,6 +25,7 @@ function View() {
   this.bet = ".player-bet"
   this.dBet = ".dbet-but"
   this.iBet = ".ibet-but"
+  this.cardSound = new Audio("sounds/card.wav")
 }
 
 View.prototype = {
@@ -115,6 +116,10 @@ View.prototype = {
   },
   updateMoney: function(amount) {
     this.playerMoney().innerHTML = "$" + amount
+  },
+  getCardSound: function() {
+    this.cardSound.oncanplaythrough
+    return this.cardSound.play()
   }
 }
 
@@ -350,6 +355,7 @@ Controller.prototype = {
         cardRight.innerHTML = card.rank + "<br>" + card.suit
       }
       cardDiv.style.webkitTransform = "rotate(" + this.rand()  + "deg)"
+      this.view.getCardSound()
     }
   },
   flipCardBack: function(card) {
