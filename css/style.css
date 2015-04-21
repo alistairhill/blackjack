@@ -129,7 +129,9 @@ body {
   color: #000;
 }
 .card-right {
-  transform: scaleY(-1);
+  -webkit-transform:rotate(180deg);
+  -moz-transform:rotate(180deg);
+  -o-transform:rotate(180deg);
   display: inline-block;
   text-align: right;
   float: right;
@@ -137,7 +139,6 @@ body {
   height: 9.2em;
   position: relative;
   bottom: 0;
-  margin-right: .3em;
 }
 .flipped-card {
   border: thin solid #333;

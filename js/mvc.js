@@ -450,7 +450,6 @@ Shoe.prototype = {
     for (var i = 0; i <6; i++) this.makeDeck();
     console.log("adding " + i + " new decks: " + this.cards.length + " cards" )
     this.shuffle()
-    this.makeBJs()
   },
   shuffle: function() {
     console.log("shuffling cards")
@@ -469,21 +468,6 @@ Shoe.prototype = {
   empty: function() {
     this.cards = []
     console.log("emptied shoe " + this.cards)
-  },
-  addBJTesting: function() {
-    var rank = ["K","K", "A"],
-    suit = ["\u2663", "\u2666", "\u2666"],
-    value = [10, 10, 11]
-    for (var i = 0, x = suit.length; i < x; i++) {
-      for (var y = 0, z = rank.length; y < z; y++) {
-        this.cards.push(new Card(rank[y], suit[i], value[y]))
-      }
-    }
-  },
-  makeBJs: function() {
-    for (var i = 0, x=2; i<x; i++) {
-      this.addBJTesting()
-    }
   }
 }
 
