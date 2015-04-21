@@ -92,7 +92,7 @@ View.prototype = {
         }
         if (fade == 0.1) clearInterval(fadeOut)
       }, 40)
-    }, 1800)
+    }, 1500)
   },
   playerWinMsg: function(won){
     if (won == true) {
@@ -105,7 +105,7 @@ View.prototype = {
     this.flashMessage("#FDEFBC", "#EEE092", "push...")
   },
   blackJackMsg: function(user) {
-    this.flashMessage("#00CD64", "#138442", user + " got Blackjack!")
+    this.flashMessage("#20BFDE", "#009DBD", user + " got Blackjack!")
   },
   resetScore: function() {
     // this.dealerScore().innerHTML = 0

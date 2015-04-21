@@ -13,7 +13,7 @@ body {
   letter-spacing: 1em;
   width: 100%;
   margin: 0 auto 0 auto;
-  padding: 10px;
+  padding: 10px 0 10px 0;
   text-align: center;
   font-size: 1.75em;
   border-bottom: 1px solid #71A696;
@@ -23,7 +23,6 @@ body {
   min-height: 28em;
   background: radial-gradient(#3D7667, #24433B);
   border-bottom: 1px solid #71A696;
-  /*background-image: url(../imgs/seamless-green-felt.jpg);*/
 }
 
 .flashes {
@@ -34,7 +33,7 @@ body {
   border-radius: 3px;
   width: 97%;
   margin: 0 auto -10px auto;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.2em;
   /*blue #20BFDE #009DBD*/
   /*beige #FDEFBC #EEE092*/
   /*green #00CD64 #138442*/
@@ -180,7 +179,8 @@ footer {
 /*-------------------------------------------------------------
 Media Queries
 -------------------------------------------------------------*/
-@media screen and (max-width: 640px) {
+/*iphone5s*/
+@media only screen and (min-device-width : 320px) and (max-device-width : 568px) {
   .game-container {
     min-height: 50em;
     border-bottom: 1px solid #71A696;
@@ -201,5 +201,14 @@ Media Queries
     height: 9.5em;
     left: 1.1em;
     top: 1.45em;
+  }
+  .deal-but, .hit-but, .stand-but, .dbet-but, .ibet-but {
+    letter-spacing: 0.3em;
+    margin-right: .8em;
+    padding: .6em;
+    font-size: 1.1em;
+    width: 7em;
+    border: .22em solid #D1D77A;
+    border-radius: .3em;
   }
 }
