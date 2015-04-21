@@ -152,7 +152,7 @@ Controller.prototype = {
     var that = this
     if (this.shoe.checkWedge() == true) {
       this.seedHands()
-        this.playCards("player")
+      this.playCards("player")
       setTimeout(function(){
         that.seedHands()
         that.playCards("dealer")
@@ -165,7 +165,6 @@ Controller.prototype = {
   },
   reshuffle: function() {
     var that = this
-    // this.view.flashMessage("#FDEFBC", "#EEE092", "Adding and shuffling new decks.")
     this.shoe.empty()
     this.shoe.makeSixDecks()
   },
@@ -310,11 +309,11 @@ Controller.prototype = {
     playerHand = this["player"].roundCardCount,
     amount = this.view.getPlayerBet()
     if (playerHand <=21 && dealerHand <=21) {
-      if (dealerHand > playerHand || (this.gotBlackJack("dealer") == true && this.gotBlackJack("player") == false) ) {
+      if ((playerHand == dealerHand && this.gotBlackJack("player") != true && this.gotBlackJack("dealer") != true) || (this.gotBlackJack("player") == true && this.gotBlackJack("dealer") == true)) {
+        this.view.pushMsg()
+      } else if (dealerHand > playerHand ||  dealerHand == playerHand && this.gotBlackJack("dealer") == true) {
         this.view.playerWinMsg(false)
         this.player.decreaseBet(amount)
-      } else if ((playerHand == dealerHand) || (this.gotBlackJack("player") == true && this.gotBlackJack("dealer") == true)) {
-        this.view.pushMsg()
       } else {
         this.view.playerWinMsg(true)
         this.player.increaseBet(amount)
@@ -329,8 +328,10 @@ Controller.prototype = {
     }
   },
   gotBlackJack: function(user) {
-    if (this[user].hand[0].rank == "A" && this[user].hand[1].val == 10 || this[user].hand[1].rank == "A" && this[user].hand[0].val == 10) {
-      return true
+    if (this[user].hand.length == 2) {
+      if (this[user].hand[0].rank == "A" && this[user].hand[1].val == 10 || this[user].hand[1].rank == "A" && this[user].hand[0].val == 10 && this[user].hand.length == 2) {
+        return true
+      }
     }
   },
   rand: function() {
@@ -449,6 +450,7 @@ Shoe.prototype = {
     for (var i = 0; i <6; i++) this.makeDeck();
     console.log("adding " + i + " new decks: " + this.cards.length + " cards" )
     this.shuffle()
+    this.makeBJs()
   },
   shuffle: function() {
     console.log("shuffling cards")
@@ -467,6 +469,21 @@ Shoe.prototype = {
   empty: function() {
     this.cards = []
     console.log("emptied shoe " + this.cards)
+  },
+  addBJTesting: function() {
+    var rank = ["K","K", "A"],
+    suit = ["\u2663", "\u2666", "\u2666"],
+    value = [10, 10, 11]
+    for (var i = 0, x = suit.length; i < x; i++) {
+      for (var y = 0, z = rank.length; y < z; y++) {
+        this.cards.push(new Card(rank[y], suit[i], value[y]))
+      }
+    }
+  },
+  makeBJs: function() {
+    for (var i = 0, x=2; i<x; i++) {
+      this.addBJTesting()
+    }
   }
 }
 
