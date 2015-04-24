@@ -25,6 +25,7 @@ function View() {
   this.bet = ".player-bet"
   this.dBet = ".dbet-but"
   this.iBet = ".ibet-but"
+  this.cardPos = "pos-"
   this.cardSound = new Audio("sounds/card.mp3")
 }
 
@@ -351,11 +352,11 @@ Controller.prototype = {
           cardDiv.style.color = "red"
         }
         cardDiv.innerHTML = card.rank + "<br>" + card.suit
-        cardDiv.appendChild(cardMiddle).className = this.getSuitFace(card)
+        cardDiv.appendChild(cardMiddle).className = this.getFace(card)
         cardDiv.appendChild(cardRight).className = "card-right"
         cardRight.innerHTML = card.rank + "<br>" + card.suit
       }
-      cardDiv.style.webkitTransform = "rotate(" + this.rand()  + "deg)"
+      //cardDiv.style.webkitTransform = "rotate(" + this.rand()  + "deg)"
       this.view.getCardSound()
     }
   },
@@ -368,11 +369,11 @@ Controller.prototype = {
       flippedCard.style.color = "red"
     }
     flippedCard.innerHTML = card.rank + "<br>" + card.suit
-    flippedCard.appendChild(cardMiddle).className = this.getSuitFace(card)
+    flippedCard.appendChild(cardMiddle).className = this.getFace(card)
     flippedCard.appendChild(cardRight).className = "card-right"
     cardRight.innerHTML = card.rank + "<br>" + card.suit
   },
-  getSuitFace: function(card) {
+  getFace: function(card) {
     if (card.rank == "J") {
       return this.view.cardJack
     } else if (card.rank == "Q") {

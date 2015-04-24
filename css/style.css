@@ -169,6 +169,76 @@ body {
   background-size: contain;
   background-image: url(../imgs/king.png);
 }
+.pos-1, .pos-2, .pos-3, .pos-4, .pos-5, .pos-6, .pos-7, .pos-8, .pos-9, .pos-10, .pos-11, .pos-12, .pos-13, .pos-14, .pos-15 {
+  position: absolute;
+  font-size: 2em;
+}
+.pos-3, .pos-6, .pos-7, .pos-11, .pos-14, .pos-15 {
+  -webkit-transform:rotate(180deg);
+  -moz-transform:rotate(180deg);
+  -o-transform:rotate(180deg);
+}
+
+.pos-1 {
+  left: 1.5em;
+  top: 2em;
+}
+.pos-2 {
+  left: 1.5em;
+  top: .5em;
+}
+.pos-3 {
+  left: 1.5em;
+  top: 3.7em;
+}
+.pos-4 {
+  left: .7em;
+  top: .5em;
+}
+.pos-5 {
+  left: 2.2em;
+  top: .5em;
+}
+.pos-6 {
+  left: .7em;
+  top: 3.7em;
+}
+.pos-7 {
+  left: 2.2em;
+  top: 3.7em;
+}
+.pos-8 {
+  left: .7em;
+  top: 2em;
+}
+.pos-9 {
+  left: 2.2em;
+  top: 2em;
+}
+.pos-10 {
+  left: 1.5em;
+  top: 1.4em;
+}
+.pos-11 {
+  left: 1.5em;
+  top: 2.5em;
+}
+.pos-12 {
+  left: .7em;
+  top: 1.7em;
+}
+.pos-13 {
+  left: 2.2em;
+  top: 1.7em;
+}
+.pos-14 {
+  left: .7em;
+  top: 2.3em;
+}
+.pos-15 {
+  left: 2.2em;
+  top: 2.3em;
+}
 
 footer {
   width: 100%;
