@@ -362,18 +362,18 @@ Controller.prototype = {
       } else {
         userDiv.appendChild(cardDiv).className = this.view.newCard
         if (card.suit == "\u2666" || card.suit == "\u2665") {
-          cardDiv.style.color = "red"
+          cardDiv.style.color = "#DD3D4D"
         }
         cardDiv.innerHTML = card.rank + "<br>" + card.suit
         cardDiv.appendChild(cardRight).className = "card-right"
         cardRight.innerHTML = card.rank + "<br>" + card.suit
         //append face or suits to card
         if (card.rank == "J") {
-          return this.view.cardJack
+          cardDiv.appendChild(cardMiddle).className = this.view.cardJack
         } else if (card.rank == "Q") {
-          return this.view.cardQueen
+          cardDiv.appendChild(cardMiddle).className = this.view.cardQueen
         } else if (card.rank == "K") {
-          return this.view.cardKing
+          cardDiv.appendChild(cardMiddle).className = this.view.cardKing
         } else {
           for (var i = 0, x = card.pos.length; i<x; i++) {
             var div = this.view.createDiv()
@@ -384,21 +384,6 @@ Controller.prototype = {
       }
       //cardDiv.style.webkitTransform = "rotate(" + this.rand()  + "deg)"
       this.view.getCardSound()
-    }
-  },
-  getFace: function(card, element) {
-    var cardMiddle = this.view.createDiv()
-    if (card.rank == "J") {
-      return this.view.cardJack
-    } else if (card.rank == "Q") {
-      return this.view.cardQueen
-    } else if (card.rank == "K") {
-      return this.view.cardKing
-    } else {
-      for (var i = 0, x = card.pos.length; i<x; i++) {
-        element.appendChild(cardMiddle).className = this.view.cardPos + card.pos[i]
-        element.innerHTML = card.suit
-      }
     }
   },
   checkForAce: function(user) {

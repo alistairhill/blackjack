@@ -124,8 +124,8 @@ body {
 /*  -ms-transform: rotate(7deg);*/ /* IE 9 */
 /*  -webkit-transform: rotate(7deg); *//* Chrome, Safari, Opera */
   /*background-size: contain;*/
-  background: #E8F4DC;
-  color: #000;
+  background: #F4F4F4;
+  color: #3B4347;
 }
 .card-right {
   -webkit-transform:rotate(180deg);
@@ -134,10 +134,11 @@ body {
   display: inline-block;
   text-align: right;
   float: right;
-  width: .8em;
+  width: .5em;
   height: 9.2em;
   position: relative;
   bottom: 0;
+  padding: .05em;
 }
 .flipped-card {
   border: thin solid #333;
@@ -192,52 +193,52 @@ body {
   top: 3.7em;
 }
 .pos-4 {
-  left: .7em;
+  left: .8em;
   top: .5em;
 }
 .pos-5 {
-  left: 2.2em;
+  left: 2.3em;
   top: .5em;
 }
 .pos-6 {
-  left: .7em;
+  left: .8em;
   top: 3.7em;
 }
 .pos-7 {
-  left: 2.2em;
+  left: 2.3em;
   top: 3.7em;
 }
 .pos-8 {
-  left: .7em;
+  left: .8em;
   top: 2em;
 }
 .pos-9 {
-  left: 2.2em;
+  left: 2.3em;
   top: 2em;
 }
 .pos-10 {
   left: 1.5em;
-  top: 1.4em;
+  top: 1.2em;
 }
 .pos-11 {
   left: 1.5em;
-  top: 2.5em;
+  top: 3em;
 }
 .pos-12 {
-  left: .7em;
+  left: .8em;
   top: 1.7em;
 }
 .pos-13 {
-  left: 2.2em;
+  left: 2.3em;
   top: 1.7em;
 }
 .pos-14 {
-  left: .7em;
-  top: 2.3em;
+  left: .8em;
+  top: 2.5em;
 }
 .pos-15 {
-  left: 2.2em;
-  top: 2.3em;
+  left: 2.3em;
+  top: 2.5em;
 }
 
 footer {
