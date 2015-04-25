@@ -338,6 +338,19 @@ Controller.prototype = {
   rand: function() {
     return Math.floor(Math.random() * 7)
   },
+  flipCardBack: function(card) {
+    var flippedCard = this.view.getFlippedCard(),
+    cardMiddle = this.view.createDiv(),
+    cardRight = this.view.createDiv()
+    flippedCard.className = "card"
+    if (card.suit == "\u2666" || card.suit == "\u2665") {
+      flippedCard.style.color = "red"
+    }
+    flippedCard.innerHTML = card.rank + "<br>" + card.suit
+    this.getFace(card, flippedCard.appendChild(cardMiddle).className)
+    flippedCard.appendChild(cardRight).className = "card-right"
+    cardRight.innerHTML = card.rank + "<br>" + card.suit
+  },
   addCardToDOM: function(user, card) {
     if (card != null) {
       var userDiv = this.view.getUserDiv(user),
@@ -352,28 +365,29 @@ Controller.prototype = {
           cardDiv.style.color = "red"
         }
         cardDiv.innerHTML = card.rank + "<br>" + card.suit
-        cardDiv.appendChild(cardMiddle).className = this.getFace(card)
         cardDiv.appendChild(cardRight).className = "card-right"
         cardRight.innerHTML = card.rank + "<br>" + card.suit
+        //append face or suits to card
+        if (card.rank == "J") {
+          return this.view.cardJack
+        } else if (card.rank == "Q") {
+          return this.view.cardQueen
+        } else if (card.rank == "K") {
+          return this.view.cardKing
+        } else {
+          for (var i = 0, x = card.pos.length; i<x; i++) {
+            var div = this.view.createDiv()
+            cardDiv.appendChild(div).className = this.view.cardPos + card.pos[i]
+            div.innerHTML = card.suit
+          }
+        }
       }
       //cardDiv.style.webkitTransform = "rotate(" + this.rand()  + "deg)"
       this.view.getCardSound()
     }
   },
-  flipCardBack: function(card) {
-    var flippedCard = this.view.getFlippedCard(),
-    cardMiddle = this.view.createDiv(),
-    cardRight = this.view.createDiv()
-    flippedCard.className = "card"
-    if (card.suit == "\u2666" || card.suit == "\u2665") {
-      flippedCard.style.color = "red"
-    }
-    flippedCard.innerHTML = card.rank + "<br>" + card.suit
-    flippedCard.appendChild(cardMiddle).className = this.getFace(card)
-    flippedCard.appendChild(cardRight).className = "card-right"
-    cardRight.innerHTML = card.rank + "<br>" + card.suit
-  },
-  getFace: function(card) {
+  getFace: function(card, element) {
+    var cardMiddle = this.view.createDiv()
     if (card.rank == "J") {
       return this.view.cardJack
     } else if (card.rank == "Q") {
@@ -381,7 +395,10 @@ Controller.prototype = {
     } else if (card.rank == "K") {
       return this.view.cardKing
     } else {
-      return this.view.cardBlank
+      for (var i = 0, x = card.pos.length; i<x; i++) {
+        element.appendChild(cardMiddle).className = this.view.cardPos + card.pos[i]
+        element.innerHTML = card.suit
+      }
     }
   },
   checkForAce: function(user) {
@@ -427,10 +444,11 @@ Controller.prototype = {
   }
 }
 
-function Card (rank, suit, value) {
+function Card (rank, suit, value, pos) {
   this.rank = rank
   this.suit = suit
   this.val = value
+  this.pos = pos
 }
 
 function Shoe() {
@@ -441,9 +459,10 @@ Shoe.prototype = {
     var rank = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"],
     suit = ["\u2663", "\u2666", "\u2665", "\u2660"],
     value = [2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 11]
+    pos = [["2","3"],["2","1","3"],["4","5","6","7"],["4","5","1","6","7"],["4","5","8","9","6","7"],["4","5","10","8","9","6","7"],["4","5","10","8","9","11","6","7"],["4","5","12","13","1","14","15","6","7"],["4","5","12","10","13","14","11","15","6","7"],[null],[null],[null],["1"]]
     for (var i = 0, x = suit.length; i < x; i++) {
       for (var y = 0, z = rank.length; y < z; y++) {
-        this.cards.push(new Card(rank[y], suit[i], value[y]))
+        this.cards.push(new Card(rank[y], suit[i], value[y], pos[y]))
       }
     }
   },
