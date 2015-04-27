@@ -146,6 +146,7 @@ body {
   font-size: 1em;
   background-size: cover;
   background-image: url(../imgs/back.png);
+  z-index: 2;
   /*background: radial-gradient(#373737, #111);*/
 }
 .card-middle, .card-jack, .card-queen, .card-king {

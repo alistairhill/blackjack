@@ -183,10 +183,13 @@ Controller.prototype = {
     this.playCards("player")
   },
   standButton: function(button) {
+    var that = this
     this.toggleDecisionButtons("off")
-    this.flipCardBack(this.dealer.hand[0])
     this.playerStood = 1
-    this.dealerHand()
+    this.addCardToDOM("dealer", this.dealer.hand[0])
+    setTimeout(function(){
+      that.dealerHand()
+    }, 700)
   },
   decBetButton: function() {
     var debit = 100
@@ -338,29 +341,21 @@ Controller.prototype = {
   rand: function() {
     return Math.floor(Math.random() * 7)
   },
-  flipCardBack: function(card) {
-    var flippedCard = this.view.getFlippedCard(),
-    cardMiddle = this.view.createDiv(),
-    cardRight = this.view.createDiv()
-    flippedCard.className = "card"
-    if (card.suit == "\u2666" || card.suit == "\u2665") {
-      flippedCard.style.color = "red"
-    }
-    flippedCard.innerHTML = card.rank + "<br>" + card.suit
-    this.getFace(card, flippedCard.appendChild(cardMiddle).className)
-    flippedCard.appendChild(cardRight).className = "card-right"
-    cardRight.innerHTML = card.rank + "<br>" + card.suit
-  },
   addCardToDOM: function(user, card) {
     if (card != null) {
       var userDiv = this.view.getUserDiv(user),
-      cardDiv = this.view.createDiv(),
       cardMiddle = this.view.createDiv(),
-      cardRight = this.view.createDiv()
+      cardRight = this.view.createDiv(),
+      cardDiv = this.view.createDiv()
       if (user === "dealer" && this[user].counter == 0) {
         userDiv.appendChild(cardDiv).className = "flipped-card"
       } else {
-        userDiv.appendChild(cardDiv).className = this.view.newCard
+        if (this.playerStood == 1 && this.dealer.hand.length == 2) {
+          cardDiv = this.view.getFlippedCard()
+          cardDiv.className = this.view.newCard
+        } else {
+          userDiv.appendChild(cardDiv).className = this.view.newCard
+        }
         if (card.suit == "\u2666" || card.suit == "\u2665") {
           cardDiv.style.color = "#DD3D4D"
         }
@@ -382,7 +377,7 @@ Controller.prototype = {
           }
         }
       }
-      //cardDiv.style.webkitTransform = "rotate(" + this.rand()  + "deg)"
+      // cardDiv.style.webkitTransform = "rotate(" + this.rand()  + "deg)"
       this.view.getCardSound()
     }
   },
