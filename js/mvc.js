@@ -26,6 +26,7 @@ function View() {
   this.dBet = ".dbet-but"
   this.iBet = ".ibet-but"
   this.cardPos = "pos-"
+  this.area = "-area"
   this.cardSound = new Audio("sounds/card.mp3")
 }
 
@@ -64,7 +65,7 @@ View.prototype = {
     return document.createElement('div')
   },
   getUserDiv: function(user) {
-    return document.querySelector("." + user + "-area")
+    return document.querySelector("." + user + this.area)
   },
   getFlashes: function() {
     return document.querySelector(this.flashes)
@@ -73,7 +74,7 @@ View.prototype = {
     return document.querySelector(this.flipped)
   },
   removeCards: function() {
-    var cards = document.querySelectorAll(this.card )
+    var cards = document.querySelectorAll(this.card)
     for (var i = 0, x = cards.length; i < x; i++) {
       cards[i].remove()
     }
@@ -299,12 +300,6 @@ Controller.prototype = {
     } else if (user == "player" && this.gotBlackJack(user) == true) {
       setTimeout(function(){
         that.view.blackJackMsg(user)
-        //payout x1.5 bet if dealer does not have bj
-        if (that.gotBlackJack("dealer") != true) {
-          var blackJackBet = amount * 1.5
-          that.player.increaseBet(blackJackBet)
-          that.view.updateMoney(that.player.money)
-        }
       }, 1000)
     }
   },
@@ -318,6 +313,11 @@ Controller.prototype = {
       } else if (dealerHand > playerHand ||  dealerHand == playerHand && this.gotBlackJack("dealer") == true) {
         this.view.playerWinMsg(false)
         this.player.decreaseBet(amount)
+      } else if (this.gotBlackJack("player") == true) {
+        //payout x1.5 bet if dealer does not have bj
+        var blackJackBet = amount * 1.5
+        this.view.playerWinMsg(true)
+        this.player.increaseBet(blackJackBet)
       } else {
         this.view.playerWinMsg(true)
         this.player.increaseBet(amount)
@@ -338,8 +338,8 @@ Controller.prototype = {
       }
     }
   },
-  rand: function() {
-    return Math.floor(Math.random() * 7)
+  rand: function(num) {
+    return Math.floor(Math.random() * num)
   },
   addCardToDOM: function(user, card) {
     if (card != null) {
@@ -377,7 +377,7 @@ Controller.prototype = {
           }
         }
       }
-      // cardDiv.style.webkitTransform = "rotate(" + this.rand()  + "deg)"
+      cardDiv.style.webkitTransform = "rotate(" + this.rand(7)  + "deg)"
       this.view.getCardSound()
     }
   },
